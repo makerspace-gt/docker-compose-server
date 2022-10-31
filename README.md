@@ -17,7 +17,7 @@ Installation:
 - [ ] matrix
 - [ ] nextcloud
 - [ ] restic
-- [ ] traefik
+- [x] traefik
 - [ ] vaultwarden
 - [ ] wiki.js
 - [ ] zammad
