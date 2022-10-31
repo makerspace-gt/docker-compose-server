@@ -5,7 +5,7 @@ Installation:
 
 ## ToDo
 
-- [ ] deployment
+- [x] deployment
   - [ ] apt restart service  
         https://askubuntu.com/questions/1367139/apt-get-upgrade-auto-restart-services
 - [ ] discourse
