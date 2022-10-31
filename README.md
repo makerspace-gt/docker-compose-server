@@ -18,7 +18,7 @@ Installation:
 - [ ] nextcloud
 - [ ] restic
 - [x] traefik
-- [ ] vaultwarden
+- [x] vaultwarden
 - [ ] wiki.js
 - [x] zammad
   - [ ] sysctl -w vm.max_map_count=262144
