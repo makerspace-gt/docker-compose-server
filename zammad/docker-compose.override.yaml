@@ -1,0 +1,24 @@
+# https://github.com/zammad/zammad-docker-compose/blob/master/.examples/proxy/docker-compose.proxy-example.yml
+
+---
+version: '3'
+
+services:
+
+  zammad-nginx:
+    environment:
+      - VIRTUAL_HOST=${ZAMMAD_HOST}
+      - NGINX_SERVER_SCHEME=https
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.zammad.rule=Host(`${ZAMMAD_HOST}`)"
+      - "traefik.http.routers.zammad.entrypoints=websecure"
+      - "traefik.http.routers.zammad.tls.certresolver=myresolver"
+    networks:
+      - default
+      - web
+
+networks:
+  web:
+    driver: overlay
+    external: true

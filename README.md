@@ -20,5 +20,5 @@ Installation:
 - [x] traefik
 - [ ] vaultwarden
 - [ ] wiki.js
-- [ ] zammad
+- [x] zammad
   - [ ] sysctl -w vm.max_map_count=262144
