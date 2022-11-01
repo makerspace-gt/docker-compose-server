@@ -32,6 +32,7 @@ apt clean
 
 # cgroups v2 user namespace remapping for FreeIPA server container
 # https://hub.docker.com/r/freeipa/freeipa-server
+mkdir /etc/docker
 echo '{ "userns-remap": "default" }' > /etc/docker/daemon.json  
 
 # install requirements
