@@ -2,7 +2,7 @@
 
 export storageboxuser=u290442-sub2
 export ghusers="igami stikkx leon2225 mattn81 mneuhaus"
-export fqdn=discovery.makerspace-gt.de
+export fqdn=igami.makerspace-gt.de
 
 export storagebox=//$storageboxuser.your-storagebox.de/$storageboxuser
 export storageboxmount=/mnt/storagebox
