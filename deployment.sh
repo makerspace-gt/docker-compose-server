@@ -8,6 +8,7 @@ export storagebox=//$storageboxuser.your-storagebox.de/$storageboxuser
 export storageboxmount=/mnt/storagebox
 export storageboxcredentials=/etc/storageboxcredentials.txt
 export gitdir=/var/docker
+export DEBIAN_FRONTEND=noninteractive
 
 # check for mount password
 if ! [ -f $storageboxcredentials ]; then
