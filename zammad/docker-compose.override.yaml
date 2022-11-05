@@ -18,7 +18,16 @@ services:
       - default
       - web
 
+  zammad-railsserver:
+    volumes:
+      - zammad-data:/opt/zammad
+      - ./application.rb:/opt/zammad/config/application.rb:ro
+
 networks:
   web:
     driver: overlay
     external: true
+
+volumes:
+  zammad-data:
+    driver: local
