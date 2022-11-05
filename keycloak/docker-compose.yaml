@@ -10,7 +10,7 @@ services:
       - POSTGRESQL_USERNAME=bn_keycloak
       - POSTGRESQL_DATABASE=bitnami_keycloak
     volumes:
-     - 'postgresql_data:/bitnami/postgresql'
+     - 'postgresql-keycloak:/bitnami/postgresql'
 
   keycloak:
     image: bitnami/keycloak:latest
@@ -26,3 +26,7 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
+
+volumes:
+  postgresql-keycloak:
+    driver: local
