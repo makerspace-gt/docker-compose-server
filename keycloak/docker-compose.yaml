@@ -26,6 +26,13 @@ services:
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
+    networks:
+      - web
+
+networks:
+  web:
+    driver: overlay
+    external: true
 
 volumes:
   postgresql-keycloak:
