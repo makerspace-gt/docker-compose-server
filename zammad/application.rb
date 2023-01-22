@@ -96,7 +96,7 @@ module Zammad
             create:           {
               criteria: {
                 owned_by_me:     true,
-                owned_by_nobody: true,
+                owned_by_nobody: false,
                 subscribed:      true,
                 no:              false,
               },
@@ -108,12 +108,12 @@ module Zammad
             update:           {
               criteria: {
                 owned_by_me:     true,
-                owned_by_nobody: true,
+                owned_by_nobody: false,
                 subscribed:      true,
                 no:              false,
               },
               channel:  {
-                email:  false,
+                email:  true,
                 online: true,
               }
             },
