@@ -40,3 +40,10 @@
         apt_unattended_upgrades_automatic_reboot_time: 02:00
 
     - role: nickjj.docker
+
+    - role: roles/traefik-crowdsec-stack
+      vars:
+        # Service Traefik
+        SERVICES_TRAEFIK_IMAGE_VERSION: latest
+        SERVICES_TRAEFIK_LABELS_TRAEFIK_HOST: "`traefik.{{ ansible_host }}`"
+        SERVICES_TRAEFIK_CERTIFICATESRESOLVERS_EMAIL: cyber@makerspace-gt.de

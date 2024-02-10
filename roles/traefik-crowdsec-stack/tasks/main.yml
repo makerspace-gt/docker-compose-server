@@ -1,0 +1,33 @@
+---
+# tasks file for roles/traefik-crowdsec-stack
+
+# copy docker compose stack
+- name: copy docker compose stack
+  ansible.builtin.copy:
+    src: defaults/traefik-crowdsec-stack
+    dest: /opt/containers
+    mode: 600
+    force: false
+
+- name: copy .env.j2
+  ansible.builtin.template:
+    src: templates/.env.j2
+    dest: /opt/containers/traefik-crowdsec-stack/.env
+
+- name: copy traefik.yml.j2
+  ansible.builtin.template:
+    src: templates/traefik.yml.j2
+    dest: /opt/containers/traefik-crowdsec-stack/traefik/traefik.yml
+
+- name: copy traefik-crowdsec-bouncer.env.j2
+  ansible.builtin.template:
+    src: templates/traefik-crowdsec-bouncer.env.j2
+    dest: /opt/containers/traefik-crowdsec-stack/config/traefik-crowdsec-bouncer.env
+
+# start docker compose stack
+- name: start docker compose stack
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/traefik-crowdsec-stack
+    state: present
+    remove_orphans: true
+    recreate: always
