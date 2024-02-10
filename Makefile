@@ -11,3 +11,6 @@ stop:
 		docker-compose --project-directory traefik down --remove-orphans
 
 restart: stop start
+
+deployment:
+		ansible-playbook -i hosts deployment.yml 

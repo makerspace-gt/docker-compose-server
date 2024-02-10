@@ -1,0 +1,8 @@
+---
+roles:
+  - name: nickjj.docker
+  - name: weareinteractive.apt
+
+collections:
+  - name: community.docker
+  - name: community.general
