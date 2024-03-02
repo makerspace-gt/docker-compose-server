@@ -23,11 +23,53 @@
   ansible.builtin.template:
     src: templates/traefik-crowdsec-bouncer.env.j2
     dest: /opt/containers/traefik-crowdsec-stack/config/traefik-crowdsec-bouncer.env
+    force: false
 
-# start docker compose stack
+- name: start docker compose stack
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/traefik-crowdsec-stack
+    state: present
+
+- name: Check {{ SERVICES_TRAEFIK_CROWDSEC_BOUNCER_CONTAINER_NAME }} health ()
+  ansible.builtin.command: docker inspect --format='{{ '{{' }} .State.Health.Status {{ '}}' }}' "{{ SERVICES_TRAEFIK_CROWDSEC_BOUNCER_CONTAINER_NAME }}"
+  register: container_health
+
+- name: prune crwodsec bouncers
+  ansible.builtin.command: docker exec -t crowdsec cscli bouncers prune --force
+  when: container_health.stdout != "healthy"
+
+- name: add {{ SERVICES_TRAEFIK_CROWDSEC_BOUNCER_CONTAINER_NAME }} as crowdsec bouncer
+  ansible.builtin.command: docker exec -t crowdsec cscli bouncers add "{{ SERVICES_TRAEFIK_CROWDSEC_BOUNCER_CONTAINER_NAME }}"
+  register: crowdsec_api_key
+  when: container_health.stdout != "healthy"
+
+- name: copy traefik-crowdsec-bouncer.env.j2
+  ansible.builtin.template:
+    src: templates/traefik-crowdsec-bouncer.env.j2
+    dest: /opt/containers/traefik-crowdsec-stack/config/traefik-crowdsec-bouncer.env
+    force: true
+  vars:
+    SERVICES_TRAEFIK_CROWDSEC_BOUNCER_KEY: "{{ crowdsec_api_key.stdout_lines[2] | trim }}"
+  when: container_health.stdout != "healthy"
+
 - name: start docker compose stack
   community.docker.docker_compose_v2:
     project_src: /opt/containers/traefik-crowdsec-stack
     state: present
     remove_orphans: true
     recreate: always
+  when: container_health.stdout != "healthy"
+
+- name: Sleep for 30 seconds and continue with play
+  ansible.builtin.wait_for:
+    timeout: 30
+  when: container_health.stdout != "healthy"
+
+- name: Check {{ SERVICES_TRAEFIK_CROWDSEC_BOUNCER_CONTAINER_NAME }} health
+  ansible.builtin.command: docker inspect --format='{{ '{{' }} .State.Health.Status {{ '}}' }}' "{{ SERVICES_TRAEFIK_CROWDSEC_BOUNCER_CONTAINER_NAME }}"
+  register: new_container_health
+  when: container_health.stdout != "healthy"
+
+- name: print {{ SERVICES_TRAEFIK_CROWDSEC_BOUNCER_CONTAINER_NAME }} health
+  debug:
+    msg: "{{ SERVICES_TRAEFIK_CROWDSEC_BOUNCER_CONTAINER_NAME }} is {{ new_container_health.stdout | default(container_health.stdout) }}"
