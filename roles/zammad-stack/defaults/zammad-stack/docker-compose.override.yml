@@ -1,0 +1,32 @@
+---
+version: '3.8'
+
+services:
+
+  zammad-backup:
+    image: ${POSTGRES_IMAGE}:${POSTGRES_VERSION}
+
+  zammad-nginx:
+    labels:
+      traefik.docker.network: proxy
+      traefik.enable: "true"
+      traefik.http.routers.zammad-secure.entrypoints: websecure
+      traefik.http.routers.zammad-secure.middlewares: default@file
+      traefik.http.routers.zammad-secure.rule: Host(${SERVICES_ZAMMAD_LABELS_TRAEFIK_HOST})
+      traefik.http.routers.zammad-secure.service: zammad
+      traefik.http.routers.zammad-secure.tls: "true"
+      traefik.http.routers.zammad-secure.tls.certresolver: http_resolver
+      traefik.http.routers.zammad.entrypoints: web
+      traefik.http.routers.zammad.rule: Host(${SERVICES_ZAMMAD_LABELS_TRAEFIK_HOST})
+      traefik.http.services.zammad.loadbalancer.server.port: "8080"
+    networks:
+      default: null
+      proxy: null
+
+  zammad-postgresql:
+    image: ${POSTGRES_IMAGE}:${POSTGRES_VERSION}
+
+networks:
+  default:
+  proxy:
+    external: true

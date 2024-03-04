@@ -1,0 +1,37 @@
+---
+# tasks file for zammad
+
+# copy docker compose stack
+- name: copy docker compose stack
+  ansible.builtin.copy:
+    src: defaults/zammad-stack
+    dest: /opt/containers
+    mode: '644'
+    force: true
+
+- name: copy docker compose stack
+  ansible.builtin.copy:
+    src: defaults/scripts
+    dest: /opt/containers/zammad-stack
+    mode: '755'
+    force: true
+
+- name: copy .env.j2
+  ansible.builtin.template:
+    src: templates/.env.j2
+    dest: /opt/containers/zammad-stack/.env
+
+- name: Setting vm.max_map_count for Elasticsearch
+  ansible.posix.sysctl:
+    name: vm.max_map_count
+    value: '262144'
+    # state: present
+    sysctl_set: yes
+    # sysctl_file: "/etc/sysctl.conf"
+    # reload: true
+    # ignoreerrors: false
+
+- name: start docker compose stack
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/zammad-stack
+    state: present

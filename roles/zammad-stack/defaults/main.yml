@@ -1,0 +1,30 @@
+---
+# defaults file for zammad
+
+# Service Elasticsearch
+ELASTICSEARCH_VERSION: 8.8.0
+
+# Service Memcache
+MEMCACHE_SERVERS: zammad-memcached:11211
+MEMCACHE_VERSION: 1.6.20-alpine
+
+# Service Postgres
+POSTGRES_DB: zammad_production
+POSTGRES_HOST: zammad-postgresql
+POSTGRES_PASS: zammad
+POSTGRES_PORT: 5432
+POSTGRES_USER: zammad
+POSTGRES_VERSION: 15.3-alpine
+POSTGRES_IMAGE: postgres
+
+# Service Redis
+REDIS_URL: redis://zammad-redis:6379
+REDIS_VERSION: 7.0.5-alpine
+
+# Service Zammad
+IMAGE_REPO: ghcr.io/zammad/zammad
+VERSION: 6.2.0-1
+SERVICES_ZAMMAD_LABELS_TRAEFIK_HOST: "`zammad.{{ ansible_host }}`"
+
+# Environment
+RESTART: always
