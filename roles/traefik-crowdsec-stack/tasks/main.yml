@@ -6,24 +6,36 @@
   ansible.builtin.copy:
     src: defaults/traefik-crowdsec-stack
     dest: /opt/containers
+    mode: '644'
+    force: true
+
+- name: Touch letsencrypt files
+  ansible.builtin.file:
+    path: "/opt/containers/traefik-crowdsec-stack/traefik/{{ item }}"
+    state: touch
     mode: '600'
-    force: false
+  with_items:
+    - acme_letsencrypt.json
+    - tls_letsencrypt.json
 
 - name: copy .env.j2
   ansible.builtin.template:
     src: templates/.env.j2
     dest: /opt/containers/traefik-crowdsec-stack/.env
+    mode: '644'
 
 - name: copy traefik.yml.j2
   ansible.builtin.template:
     src: templates/traefik.yml.j2
     dest: /opt/containers/traefik-crowdsec-stack/traefik/traefik.yml
+    mode: '644'
 
 - name: copy traefik-crowdsec-bouncer.env.j2
   ansible.builtin.template:
     src: templates/traefik-crowdsec-bouncer.env.j2
     dest: /opt/containers/traefik-crowdsec-stack/config/traefik-crowdsec-bouncer.env
     force: false
+    mode: '644'
 
 - name: start docker compose stack
   community.docker.docker_compose_v2:
@@ -48,6 +60,7 @@
     src: templates/traefik-crowdsec-bouncer.env.j2
     dest: /opt/containers/traefik-crowdsec-stack/config/traefik-crowdsec-bouncer.env
     force: true
+    mode: '644'
   vars:
     SERVICES_TRAEFIK_CROWDSEC_BOUNCER_KEY: "{{ crowdsec_api_key.stdout_lines[2] | trim }}"
   when: container_health.stdout != "healthy"

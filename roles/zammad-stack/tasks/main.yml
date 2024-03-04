@@ -20,6 +20,7 @@
   ansible.builtin.template:
     src: templates/.env.j2
     dest: /opt/containers/zammad-stack/.env
+    mode: '644'
 
 - name: Setting vm.max_map_count for Elasticsearch
   ansible.posix.sysctl:
