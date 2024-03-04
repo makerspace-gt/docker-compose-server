@@ -47,3 +47,12 @@
         SERVICES_TRAEFIK_IMAGE_VERSION: latest
         SERVICES_TRAEFIK_LABELS_TRAEFIK_HOST: "`traefik.{{ ansible_host }}`"
         SERVICES_TRAEFIK_CERTIFICATESRESOLVERS_EMAIL: cyber@makerspace-gt.de
+
+    - role: roles/zammad-stack
+      vars:
+        ELASTICSEARCH_VERSION: latest
+        MEMCACHE_VERSION: latest
+        POSTGRES_VERSION: latest
+        POSTGRES_IMAGE: pgautoupgrade/pgautoupgrade
+        REDIS_VERSION: latest
+        VERSION: latest
