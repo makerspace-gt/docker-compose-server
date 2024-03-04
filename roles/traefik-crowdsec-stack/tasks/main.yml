@@ -6,7 +6,7 @@
   ansible.builtin.copy:
     src: defaults/traefik-crowdsec-stack
     dest: /opt/containers
-    mode: 600
+    mode: '600'
     force: false
 
 - name: copy .env.j2
