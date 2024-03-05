@@ -1,0 +1,55 @@
+version: "3"
+services:
+
+  wikijs-postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: wikijs
+      POSTGRES_PASSWORD: wikijsrocks
+      POSTGRES_USER: wikijs
+    logging:
+      driver: "none"
+    restart: unless-stopped
+    volumes:
+      - wikijs-postgres-data:/var/lib/postgresql/data
+
+  wikijs:
+    image: ghcr.io/requarks/wiki:2
+    depends_on:
+      - wikijs-postgres
+    environment:
+      DB_TYPE: postgres
+      DB_HOST: wikijs-postgres
+      DB_PORT: 5432
+      DB_USER: wikijs
+      DB_PASS: wikijsrocks
+      DB_NAME: wikijs
+    restart: unless-stopped
+    # ports:
+      # - "80:3000"
+    labels:
+      traefik.docker.network: proxy
+      traefik.enable: "true"
+      traefik.http.routers.wikijs-secure.entrypoints: websecure
+      traefik.http.routers.wikijs-secure.middlewares: default@file
+      traefik.http.routers.wikijs-secure.rule: Host(${SERVICES_WIKIJS_LABELS_TRAEFIK_HOST})
+      traefik.http.routers.wikijs-secure.service: wikijs
+      traefik.http.routers.wikijs-secure.tls: "true"
+      traefik.http.routers.wikijs-secure.tls.certresolver: http_resolver
+      traefik.http.routers.wikijs.entrypoints: web
+      traefik.http.routers.wikijs.rule: Host(${SERVICES_WIKIJS_LABELS_TRAEFIK_HOST})
+      traefik.http.services.wikijs.loadbalancer.server.port: "3000"
+    networks:
+      default: null
+      proxy: null
+
+networks:
+  default:
+  proxy:
+    external: true
+
+volumes:
+  wikijs-postgres-data:
+    driver: local
+
+

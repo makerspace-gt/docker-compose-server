@@ -1,0 +1,4 @@
+---
+# defaults file for vaultwarden
+
+SERVICES_WIKIJS_LABELS_TRAEFIK_HOST: "`wikijs.{{ ansible_host }}`"

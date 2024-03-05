@@ -1,0 +1,21 @@
+---
+# tasks file for wiki.js
+
+# copy docker compose stack
+- name: copy docker compose stack
+  ansible.builtin.copy:
+    src: defaults/wiki.js-stack
+    dest: /opt/containers
+    mode: '644'
+    force: true
+
+- name: copy .env.j2
+  ansible.builtin.template:
+    src: templates/.env.j2
+    dest: /opt/containers/wiki.js-stack/.env
+    mode: '644'
+
+- name: start docker compose stack
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/wiki.js-stack
+    state: present
