@@ -56,3 +56,5 @@
         POSTGRES_IMAGE: pgautoupgrade/pgautoupgrade
         REDIS_VERSION: latest
         VERSION: latest
+
+    - role: roles/vaultwarden-stack
