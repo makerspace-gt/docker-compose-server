@@ -59,4 +59,4 @@
 
     - role: roles/vaultwarden-stack
 
-    - role: roles/wiki.js-stack
+    - role: roles/wikijs-stack
