@@ -1,5 +1,5 @@
 ---
-# defaults file for zammad
+# defaults file for zammad-stack
 
 # Service Elasticsearch
 ELASTICSEARCH_VERSION: 8.8.0

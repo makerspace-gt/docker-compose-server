@@ -1,5 +1,5 @@
 ---
-# tasks file for zammad
+# tasks file for zammad-stack
 
 # copy docker compose stack
 - name: copy docker compose stack
