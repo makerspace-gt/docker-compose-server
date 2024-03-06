@@ -1,5 +1,5 @@
 ---
-# tasks file for vaultwarden
+# tasks file for vaultwarden-stack
 
 # copy docker compose stack
 - name: copy docker compose stack
