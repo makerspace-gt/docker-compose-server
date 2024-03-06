@@ -58,3 +58,5 @@
         VERSION: latest
 
     - role: roles/vaultwarden-stack
+
+    - role: roles/wiki.js-stack
