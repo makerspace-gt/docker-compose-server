@@ -1,5 +1,5 @@
 ---
-# defaults file for roles/traefik-crowdsec-stack
+# defaults file for traefik-crowdsec-stack
 
 # Service Crowdsec
 SERVICES_CROWDSEC_CONTAINER_NAME: crowdsec
