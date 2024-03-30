@@ -4,6 +4,8 @@ services:
     image: ${POSTGRES_IMAGE}:${POSTGRES_VERSION}
 
   zammad-nginx:
+    environment:
+      NGINX_SERVER_SCHEME: "https"
     labels:
       traefik.docker.network: proxy
       traefik.enable: "true"
