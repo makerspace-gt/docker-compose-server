@@ -1,6 +1,4 @@
 ---
-version: '3.8'
-
 x-shared:
   zammad-service: &zammad-service
     environment: &zammad-environment
@@ -42,7 +40,6 @@ x-shared:
       - zammad-redis
 
 services:
-
   zammad-backup:
     command: ["zammad-backup"]
     depends_on:
