@@ -1,0 +1,76 @@
+---
+- name: deploy it infrastructure servers
+  hosts: wasdus
+  remote_user: root
+
+  pre_tasks:
+
+    - name: Ensure a locale exists
+      community.general.locale_gen:
+        name: '{{ item }}'
+      with_items:
+        - en_US.UTF-8
+        - de_DE.UTF-8
+
+    - name: Set hostname
+      ansible.builtin.hostname:
+        name: "{{ ansible_host }}"
+
+    - name: import ssh keys for root
+      # https://stackoverflow.com/a/48882051
+      ansible.posix.authorized_key:
+        user: root
+        key: https://github.com/{{ item }}.keys
+        comment: '{{ item }}'
+      ignore_errors: yes
+      with_items:
+        - igami
+        - leon2225
+        - mattn81
+        - bongald
+        - stikkx
+        - ReneHezser
+
+  roles:
+
+    - role: weareinteractive.apt
+      vars: 
+        apt_upgrade: dist
+        apt_unattended_upgrades_automatic_reboot: yes
+        apt_unattended_upgrades_automatic_reboot_time: 02:00
+
+    - role: nickjj.docker
+
+    - role: roles/traefik-crowdsec-stack
+      vars:
+        # Service Traefik
+        SERVICES_TRAEFIK_IMAGE_VERSION: latest
+        SERVICES_TRAEFIK_LABELS_TRAEFIK_HOST: "`traefik.{{ ansible_host }}`"
+        SERVICES_TRAEFIK_CERTIFICATESRESOLVERS_EMAIL: cyber@makerspace-gt.de
+
+    - role: roles/zammad-stack
+      vars:
+        ELASTICSEARCH_VERSION: latest
+        MEMCACHE_VERSION: latest
+        POSTGRES_VERSION: latest
+        POSTGRES_IMAGE: pgautoupgrade/pgautoupgrade
+        REDIS_VERSION: latest
+        VERSION: latest
+        SERVICES_ZAMMAD_LABELS_TRAEFIK_HOST: "`helpdesk.makerspace-gt.de`"
+
+        # # Restore Zammad Backup
+        # # https://github.com/DoTheEvo/selfhosted-apps-docker/tree/master/zammad#backup-and-restore
+
+        # cd /opt/containers/zammad-stack
+        # docker compose down --remove-orphans
+        # gzip -dkc /var/lib/docker/volumes/zammad-stack_zammad-backup/_data/20240330072148_zammad_db.psql.gz > /var/lib/docker/volumes/zammad-stack_postgresql-data/_data/20240330072148_zammad_db.psql
+        # docker compose up -d zammad-postgresql
+        # docker compose exec zammad-postgresql bash -c "dropdb zammad_production -U zammad"
+        # docker compose exec zammad-postgresql bash -c "createdb zammad_production -U zammad"
+        # docker compose exec zammad-postgresql bash -c "psql -U zammad zammad_production < /var/lib/postgresql/data/20240330072148_zammad_db.psql"
+        # rm /var/lib/docker/volumes/zammad-stack_postgresql-data/_data/20240330072148_zammad_db.psql
+        # docker compose down --remove-orphans
+        # rm -rf /var/lib/docker/volumes/zammad-stack_zammad-var/_data/*
+        # tar -xvpf /var/lib/docker/volumes/zammad-stack_zammad-backup/_data/20240330072148_zammad_files.tar.gz --strip-components=2 -C /var/lib/docker/volumes/zammad-stack_zammad-var/_data/
+        # docker compose up -d --force-recreate
+
