@@ -73,4 +73,6 @@
         # rm -rf /var/lib/docker/volumes/zammad-stack_zammad-var/_data/*
         # tar -xvpf /var/lib/docker/volumes/zammad-stack_zammad-backup/_data/20240330072148_zammad_files.tar.gz --strip-components=2 -C /var/lib/docker/volumes/zammad-stack_zammad-var/_data/
         # docker compose up -d --force-recreate
+        # docker compose exec zammad-railsserver cp var/config/database.yml config/database.yml 
+        # docker compose exec zammad-railsserver rake zammad:searchindex:rebuild
 
