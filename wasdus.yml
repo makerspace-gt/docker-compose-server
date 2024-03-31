@@ -55,7 +55,7 @@
         POSTGRES_VERSION: latest
         POSTGRES_IMAGE: pgautoupgrade/pgautoupgrade
         REDIS_VERSION: latest
-        VERSION: latest
+        VERSION: 6.2
         SERVICES_ZAMMAD_LABELS_TRAEFIK_HOST: "`helpdesk.makerspace-gt.de`"
 
         # # Restore Zammad Backup
@@ -73,6 +73,5 @@
         # rm -rf /var/lib/docker/volumes/zammad-stack_zammad-var/_data/*
         # tar -xvpf /var/lib/docker/volumes/zammad-stack_zammad-backup/_data/20240330072148_zammad_files.tar.gz --strip-components=2 -C /var/lib/docker/volumes/zammad-stack_zammad-var/_data/
         # docker compose up -d --force-recreate
-        # docker compose exec zammad-railsserver cp var/config/database.yml config/database.yml 
         # docker compose exec zammad-railsserver rake zammad:searchindex:rebuild
 
