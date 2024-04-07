@@ -1,4 +1,5 @@
 ---
 # defaults file for vaultwarden-stack
 
-SERVICES_VAULTWARDEN_LABELS_TRAEFIK_HOST: "`vaultwarden.{{ ansible_host }}`"
+SERVICES_VAULTWARDEN_ENVIRONMENT_DOMAIN: "vaultwarden.{{ ansible_host }}"
+SERVICES_VAULTWARDEN_LABELS_TRAEFIK_HOST: "`{{ SERVICES_VAULTWARDEN_ENVIRONMENT_DOMAIN }}`"

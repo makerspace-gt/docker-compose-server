@@ -9,6 +9,6 @@ Installation:
 - [ ] nextcloud
 - [x] traefik
   - [ ] Logrotate
-- [ ] vaultwarden
+- [x] vaultwarden
 - [ ] wiki.js
 - [x] zammad

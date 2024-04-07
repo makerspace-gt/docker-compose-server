@@ -7,7 +7,7 @@ services:
       - vaultwarden-data:/data/
     environment:
       WEBSOCKET_ENABLED: "true" ## Enables websocket notifications
-      DOMAIN: "https://${SERVICES_VAULTWARDEN_LABELS_TRAEFIK_HOST}" # It's recommended to configure this value, otherwise certain functionality might not work, like attachment downloads, email links and U2F.
+      DOMAIN: "https://${SERVICES_VAULTWARDEN_ENVIRONMENT_DOMAIN}" # It's recommended to configure this value, otherwise certain functionality might not work, like attachment downloads, email links and U2F.
     labels:
       traefik.docker.network: proxy
       traefik.enable: "true"
