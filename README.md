@@ -10,5 +10,5 @@ Installation:
 - [x] traefik
   - [ ] Logrotate
 - [x] vaultwarden
-- [ ] wiki.js
+- [x] wikijs
 - [x] zammad

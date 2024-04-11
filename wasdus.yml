@@ -78,3 +78,21 @@
     - role: roles/vaultwarden-stack
       vars:
         SERVICES_VAULTWARDEN_ENVIRONMENT_DOMAIN: "bitwarden.makerspace-gt.de"
+
+    - role: roles/wikijs-stack
+      vars:
+        SERVICES_WIKIJS_LABELS_TRAEFIK_HOST: "`wiki.makerspace-gt.de`"
+
+        # # Transfer wiki.js
+        # # https://docs.requarks.io/install/transfer
+        # # https://www.postgresql.org/docs/current/backup-dump.html
+        # root@discovery:~# cd /var/docker/wiki.js/
+        # root@discovery:/var/docker/wiki.js# docker-compose stop wiki 
+        # root@discovery:~# docker exec wikijs_db_1 pg_dump wiki -U wikijs > wikibackup.db
+
+        # root@wasdus:~# cd /opt/containers/wikijs-stack/
+        # root@wasdus:/opt/containers/wikijs-stack# docker compose stop wikijs
+        # root@wasdus:/opt/containers/wikijs-stack# docker compose exec wikijs-postgres dropdb -U wikijs wikijs
+        # root@wasdus:/opt/containers/wikijs-stack# docker compose exec wikijs-postgres createdb -U wikijs wikijs
+        # root@wasdus:/opt/containers/wikijs-stack# cat wikibackup.dump | docker exec -i wikijs-stack-wikijs-postgres-1 psql -U wikijs wikijs
+        # root@wasdus:/opt/containers/wikijs-stack# docker compose up -d --force-recreate 
