@@ -12,9 +12,9 @@
         - en_US.UTF-8
         - de_DE.UTF-8
 
-    - name: Set hostname
-      ansible.builtin.hostname:
-        name: "{{ ansible_host }}"
+    - name: Set timezone to Europe/Berlin
+      community.general.timezone:
+        name: Europe/Berlin
 
     - name: import ssh keys for root
       # https://stackoverflow.com/a/48882051

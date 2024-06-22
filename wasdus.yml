@@ -12,6 +12,10 @@
         - en_US.UTF-8
         - de_DE.UTF-8
 
+    - name: Set timezone to Europe/Berlin
+      community.general.timezone:
+        name: Europe/Berlin
+
     - name: Set hostname
       ansible.builtin.hostname:
         name: "{{ ansible_host }}"
