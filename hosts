@@ -1,7 +1,7 @@
 # https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html
 
-[wasdus]
-wasdus.makerspace-gt.de
+[wasber]
+wasber.makerspace-gt.de
 
 [unstable]
 unstable.makerspace-gt.de
