@@ -1,0 +1,6 @@
+---
+# defaults file for nextcloud-stack
+
+NEXTCLOUD_HOSTNAME: "nextcloud.{{ ansible_host }}"
+NEXTCLOUD_DATA_DIR: /mnt/nextcloud-data
+SERVICES_NEXTCLOUD_LABELS_TRAEFIK_HOST: "`{{ NEXTCLOUD_HOSTNAME }}`"

@@ -1,0 +1,47 @@
+---
+# tasks file for nextcloud-stack
+
+- name: copy docker compose stack
+  ansible.builtin.copy:
+    src: defaults/nextcloud-stack
+    dest: /opt/containers
+    mode: '644'
+    force: true
+
+- name: copy .env.j2
+  ansible.builtin.template:
+    src: templates/.env.j2
+    dest: /opt/containers/nextcloud-stack/.env
+    mode: '644'
+
+- name: start docker compose stack
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/nextcloud-stack
+    state: present
+
+- name: Check Nextcloud status until installed
+  ansible.builtin.command: docker exec --user www-data nextcloud php occ status
+  register: nextcloud_status
+  until: '"- installed: true" in nextcloud_status.stdout'
+  retries: 60
+  delay: 30
+
+- name: Manage apps tasks if NEXTCLOUD_DESIRED_ENABLED_APPS is defined
+  include_tasks: apps.yml
+  when: NEXTCLOUD_DESIRED_ENABLED_APPS is defined
+
+- name: Manage groups tasks if NEXTCLOUD_DESIRED_GROUPS is defined
+  include_tasks: groups.yml
+  when: NEXTCLOUD_DESIRED_GROUPS is defined
+
+- name: Manage groupfolders tasks if NEXTCLOUD_DESIRED_GROUPFOLDERS is defined
+  include_tasks: groupfolders.yml
+  when: NEXTCLOUD_DESIRED_GROUPFOLDERS is defined
+
+- name: Manage occ tasks if NEXTCLOUD_OCC_COMMANDS is defined
+  include_tasks: occ.yml
+  when: NEXTCLOUD_OCC_COMMANDS is defined
+
+# root@1a0ca58aa6ef:/var/spool/cron/crontabs# cat www-data 
+# */5 * * * * php -f /var/www/html/cron.php
+# * */6 * * * php occ preview:generate-all

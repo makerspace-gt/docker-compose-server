@@ -1,0 +1,42 @@
+---
+- name: Get the list of existing groupfolders
+  ansible.builtin.command: docker exec --user www-data nextcloud php occ groupfolders:list --output=json
+  register: existing_groupfolders_output
+  changed_when: False
+
+- name: Set fact for existing groupfolders
+  set_fact:
+    existing_groupfolders: "{{ existing_groupfolders_output.stdout | from_json }}"
+
+- name: Ensure desired groupfolders exist
+  ansible.builtin.command: docker exec --user www-data nextcloud php occ groupfolders:create "{{ item.name }}"
+  register: create_groupfolder_output
+  when: item.name not in existing_groupfolders | map(attribute='mount_point') | list
+  loop: "{{ NEXTCLOUD_DESIRED_GROUPFOLDERS }}"
+
+- name: Get the list of existing groupfolders
+  ansible.builtin.command: docker exec --user www-data nextcloud php occ groupfolders:list --output=json
+  register: existing_groupfolders_output
+  changed_when: False
+  when: create_groupfolder_output is changed
+
+- name: Set fact for existing groupfolders
+  set_fact:
+    existing_groupfolders: "{{ existing_groupfolders_output.stdout | from_json }}"
+  when: create_groupfolder_output is changed
+
+- name: Merge desired groupfolders with existing IDs
+  set_fact:
+    NEXTCLOUD_DESIRED_GROUPFOLDERS_WITH_IDS: []
+
+- name: Assign IDs to desired groupfolders
+  set_fact:
+    NEXTCLOUD_DESIRED_GROUPFOLDERS_WITH_IDS: "{{ NEXTCLOUD_DESIRED_GROUPFOLDERS_WITH_IDS + [ item | combine({'id': (existing_groupfolders | selectattr('mount_point', 'equalto', item.name) | map(attribute='id') | first | default('new'))})] }}"
+  loop: "{{ NEXTCLOUD_DESIRED_GROUPFOLDERS }}"
+  loop_control:
+    loop_var: item
+
+- name: Set groupfolder permissions
+  ansible.builtin.command: docker exec --user www-data nextcloud php occ groupfolders:group {{ item.0.id }} {{ item.1 | dict2items | map(attribute='key') | list | first | regex_replace(' ', '\\ ') }} {{ item.1 | dict2items | map(attribute='value') | list | first }}
+  loop: "{{ q('ansible.builtin.subelements', NEXTCLOUD_DESIRED_GROUPFOLDERS_WITH_IDS, 'groups', {'skip_missing': True}) }}"
+

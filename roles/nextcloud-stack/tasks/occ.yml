@@ -1,0 +1,10 @@
+- name: enable maintenance mode
+  ansible.builtin.command: docker exec --user www-data nextcloud php occ maintenance:mode --on
+
+- name: exec occ commands
+  ansible.builtin.command: docker exec --user www-data nextcloud php occ {{ item }}
+  loop: "{{ NEXTCLOUD_OCC_COMMANDS }}"
+  ignore_errors: true
+
+- name: disable maintenance mode
+  ansible.builtin.command: docker exec --user www-data nextcloud php occ maintenance:mode --off
