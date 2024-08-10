@@ -6,6 +6,7 @@ services:
     volumes:
       - vaultwarden-data:/data/
     env_file:
+      - /opt/containers/env_files/email.env
       - .env
     labels:
       traefik.docker.network: proxy
