@@ -5,9 +5,8 @@ services:
     restart: unless-stopped
     volumes:
       - vaultwarden-data:/data/
-    environment:
-      WEBSOCKET_ENABLED: "true" ## Enables websocket notifications
-      DOMAIN: "https://${SERVICES_VAULTWARDEN_ENVIRONMENT_DOMAIN}" # It's recommended to configure this value, otherwise certain functionality might not work, like attachment downloads, email links and U2F.
+    env_file:
+      - .env
     labels:
       traefik.docker.network: proxy
       traefik.enable: "true"
