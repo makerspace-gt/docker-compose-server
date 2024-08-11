@@ -1,7 +1,6 @@
 ---
 # tasks file for zammad-stack
 
-# copy docker compose stack
 - name: Create zammad-backup volume
   community.docker.docker_volume:
     name: zammad-backup
