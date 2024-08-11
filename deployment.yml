@@ -1,6 +1,6 @@
 ---
 - name: deploy it infrastructure servers
-  hosts: unstable
+  hosts: wasber
   remote_user: root
 
   pre_tasks:
@@ -35,6 +35,12 @@
         - stikkx
         - ReneHezser
 
+    - name: Ensure /opt/containers/env_files directory exists
+      ansible.builtin.file:
+        path: /opt/containers/env_files
+        state: directory
+        mode: '0755'
+
     - name: copy email.env
       ansible.builtin.copy:
         src: defaults/opt/containers/env_files/email.env
@@ -50,6 +56,8 @@
 
     - role: nickjj.docker
 
+    - role: roles/watchtower
+
     - role: roles/traefik-crowdsec-stack
       vars:
         # Service Traefik
@@ -59,13 +67,31 @@
 
     - role: roles/zammad-stack
       vars:
-        ELASTICSEARCH_VERSION: latest
-        MEMCACHE_VERSION: latest
-        POSTGRES_VERSION: latest
-        POSTGRES_IMAGE: pgautoupgrade/pgautoupgrade
-        REDIS_VERSION: latest
-        VERSION: latest
+        SERVICES_ZAMMAD_LABELS_TRAEFIK_HOST: "`helpdesk.makerspace-gt.de`"
 
-    - role: roles/vaultwarden-stack
+      # # Restore Zammad Backup
+      # # https://github.com/DoTheEvo/selfhosted-apps-docker/tree/master/zammad#backup-and-restore
+      # # https://restic.readthedocs.io/en/stable/050_restore.html#
+      # # https://docs.zammad.org/en/latest/install/docker-compose.html#how-to-run-commands-in-the-stack
 
-    - role: roles/wikijs-stack
+      # docker compose --project-directory /opt/containers/zammad-stack down --remove-orphans 
+      # docker exec resticker restic restore 74c4f304:/mnt/volumes/zammad --include zammad_production.pg_dump --target /mnt/volumes/zammad
+      # docker compose --project-directory /opt/containers/zammad-stack up -d zammad-postgresql
+      # docker compose --project-directory /opt/containers/zammad-stack exec zammad-postgresql bash -c "dropdb zammad_production -U zammad"
+      # docker compose --project-directory /opt/containers/zammad-stack exec zammad-postgresql bash -c "createdb zammad_production -U zammad"
+      # docker compose --project-directory /opt/containers/zammad-stack exec zammad-postgresql bash -c "psql -U zammad zammad_production < /var/tmp/zammad/zammad_production.pg_dump"
+      # docker compose --project-directory /opt/containers/zammad-stack up -d --force-recreate
+      # docker compose --project-directory /opt/containers/zammad-stack run --rm zammad-railsserver rake zammad:searchindex:rebuild
+
+    - role: roles/vaultwarden
+      vars:
+        SERVICES_VAULTWARDEN_ENVIRONMENT_DOMAIN: "vault.makerspace-gt.de"
+
+      # # Restore Vaultwarden Backup
+      # # https://restic.readthedocs.io/en/stable/050_restore.html#
+
+      # docker compose --project-directory /opt/containers/vaultwarden down --remove-orphans 
+      # docker exec resticker restic restore a394d8e5:/mnt/volumes/vaultwarden --target /mnt/volumes/vaultwarden
+      # docker compose --project-directory /opt/containers/vaultwarden up -d --force-recreate
+
+    - role: roles/resticker-stack
