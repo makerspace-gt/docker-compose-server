@@ -14,6 +14,16 @@
     dest: /opt/containers/nextcloud-stack/.env
     mode: '644'
 
+- name: Setting vm.overcommit_memory for redis
+  ansible.posix.sysctl:
+    name: vm.overcommit_memory
+    value: '1'
+    # state: present
+    sysctl_set: yes
+    # sysctl_file: "/etc/sysctl.conf"
+    # reload: true
+    # ignoreerrors: false
+
 - name: start docker compose stack
   community.docker.docker_compose_v2:
     project_src: /opt/containers/nextcloud-stack
@@ -25,6 +35,9 @@
   until: '"- installed: true" in nextcloud_status.stdout'
   retries: 60
   delay: 30
+
+- name: disable maintenance mode
+  ansible.builtin.command: docker exec --user www-data nextcloud php occ maintenance:mode --off
 
 - name: Manage apps tasks if NEXTCLOUD_DESIRED_ENABLED_APPS is defined
   include_tasks: apps.yml

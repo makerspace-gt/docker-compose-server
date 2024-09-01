@@ -23,11 +23,16 @@ services:
             docker exec zammad-railsserver /docker-entrypoint.sh rails r 'Channel.where(area: "Email::Account").update_all(active: false)'
             docker exec zammad-postgresql pg_dump --file=/var/tmp/zammad/zammad_production.pg_dump --dbname=zammad_production --username=zammad
             docker exec zammad-railsserver /docker-entrypoint.sh rails r 'Channel.where(area: "Email::Account").update_all(active: true)'
+            docker exec --user www-data nextcloud php occ maintenance:mode --on
+            docker exec nextcloud-postgres pg_dump --file=/mnt/nextcloud-data/nextcloud.pg_dump --dbname=nextcloud --username=nextcloud
+      POST_COMMANDS_EXIT: |-
+            docker exec --user www-data nextcloud php occ maintenance:mode --off
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - restic-backup:/mnt/restic
       - zammad-backup:/mnt/volumes/zammad
       - vaultwarden-data:/mnt/volumes/vaultwarden
+      - nextcloud-data:/mnt/volumes/nextcloud
 
   prune:
     container_name: resticker-prune
@@ -71,4 +76,7 @@ volumes:
     external: true
   vaultwarden-data:
     name: vaultwarden-data
+    external: true
+  nextcloud-data:
+    name: nextcloud-stack_nextcloud-data
     external: true

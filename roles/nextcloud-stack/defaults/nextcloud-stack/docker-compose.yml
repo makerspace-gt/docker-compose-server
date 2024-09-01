@@ -3,24 +3,19 @@ services:
   postgres:
     container_name: nextcloud-postgres
     image: pgautoupgrade/pgautoupgrade:latest
-    restart: unless-stopped
+    restart: always
+    environment:
+      NEXTCLOUD_DATA_DIR: ${NEXTCLOUD_DATA_DIR}
     env_file:
       - postgres.env
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
     volumes:
       - nextcloud-postgres-data:/var/lib/postgresql/data
-      - nextcloud-postgres-dump:/nextcloud-postgres-dump
-      - /etc/localtime:/etc/localtime:ro
+      - nextcloud-data:${NEXTCLOUD_DATA_DIR}:z
 
   redis:
     container_name: nextcloud-redis
     image: redis:latest
     restart: always
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
 
   nextcloud:
     container_name: nextcloud
@@ -52,7 +47,6 @@ services:
       traefik.http.routers.nextcloud.entrypoints: web
       traefik.http.routers.nextcloud.rule: Host(`${NEXTCLOUD_HOSTNAME}`)
       traefik.http.services.nextcloud.loadbalancer.server.port: "80"
-      com.centurylinklabs.watchtower.enable: true
     networks:
       default: null
       proxy: null
@@ -75,8 +69,6 @@ services:
     entrypoint: /cron.sh
     env_file:
       - postgres.env
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
     volumes:
       - nextcloud-php:/var/www/html:z
       - nextcloud-data:${NEXTCLOUD_DATA_DIR}:z
@@ -95,6 +87,9 @@ volumes:
   nextcloud-php:
     driver: local
   nextcloud-data:
+    # name: nextcloud-data
+    # external: true
+
     driver: local
     driver_opts:
       type: cifs
