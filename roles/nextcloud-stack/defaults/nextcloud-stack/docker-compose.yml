@@ -30,6 +30,7 @@ services:
       REDIS_HOST: redis
       NEXTCLOUD_DATA_DIR: ${NEXTCLOUD_DATA_DIR}
       NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_HOSTNAME}
+      PHP_MEMORY_LIMIT: 1024M
     env_file:
       - postgres.env
       - admin.env
@@ -66,6 +67,7 @@ services:
       - redis
     environment:
       NEXTCLOUD_DATA_DIR: ${NEXTCLOUD_DATA_DIR}
+      PHP_MEMORY_LIMIT: 1024M
     entrypoint: /cron.sh
     env_file:
       - postgres.env

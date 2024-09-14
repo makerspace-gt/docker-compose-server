@@ -57,4 +57,4 @@
 
 # root@1a0ca58aa6ef:/var/spool/cron/crontabs# cat www-data 
 # */5 * * * * php -f /var/www/html/cron.php
-# * */6 * * * php occ preview:generate-all
+# * */6 * * * php occ preview:pre-generate
