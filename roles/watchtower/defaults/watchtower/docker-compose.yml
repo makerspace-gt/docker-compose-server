@@ -5,7 +5,7 @@ services:
     image: containrrr/watchtower:latest
     restart: unless-stopped
     environment:
-      WATCHTOWER_SCHEDULE: 0 0 4 * * * # check daily at 04:00 o'clock
+      WATCHTOWER_SCHEDULE: 0 0 4 * * 2 # check tuesdays at 04:00 o'clock
       # WATCHTOWER_LABEL_ENABLE: true
       WATCHTOWER_ROLLING_RESTART: true
       WATCHTOWER_CLEANUP: true
