@@ -173,4 +173,20 @@
           - viewer
           - workflowengine
 
+    - role: roles/wikijs-stack
+      vars:
+        SERVICES_WIKIJS_LABELS_TRAEFIK_HOST: "`wiki.makerspace-gt.de`"
+
+        # # Restore Wiki.js Backup
+        # # https://docs.requarks.io/install/transfer
+        # # https://www.postgresql.org/docs/current/backup-dump.html
+        # # https://restic.readthedocs.io/en/stable/050_restore.html#
+
+        # docker compose --project-directory /opt/containers/wikijs-stack stop wikijs
+        # docker exec resticker restic restore 0941e370:/mnt/volumes/wikijs --include wikijs.pg_dump --target /mnt/volumes/wikijs
+        # docker compose --project-directory /opt/containers/wikijs-stack exec wikijs-postgres bash -c "dropdb wikijs -U wikijs"
+        # docker compose --project-directory /opt/containers/wikijs-stack exec wikijs-postgres bash -c "createdb wikijs -U wikijs"
+        # docker compose --project-directory /opt/containers/wikijs-stack exec wikijs-postgres bash -c "psql -U wikijs wikijs < /var/tmp/wikijs.pg_dump"
+        # docker compose --project-directory /opt/containers/wikijs-stack up -d --force-recreate
+
     - role: roles/resticker-stack

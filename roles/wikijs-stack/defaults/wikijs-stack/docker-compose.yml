@@ -1,7 +1,8 @@
 services:
 
   wikijs-postgres:
-    image: postgres:15-alpine
+    container_name: wikijs-postgres
+    image: pgautoupgrade/pgautoupgrade:latest
     environment:
       POSTGRES_DB: wikijs
       POSTGRES_PASSWORD: wikijsrocks
@@ -11,9 +12,11 @@ services:
     restart: unless-stopped
     volumes:
       - wikijs-postgres-data:/var/lib/postgresql/data
+      - backup:/var/tmp
 
   wikijs:
-    image: ghcr.io/requarks/wiki:2
+    container_name: wikijs
+    image: ghcr.io/requarks/wiki:latest
     depends_on:
       - wikijs-postgres
     environment:
@@ -24,8 +27,6 @@ services:
       DB_PASS: wikijsrocks
       DB_NAME: wikijs
     restart: unless-stopped
-    # ports:
-      # - "80:3000"
     labels:
       traefik.docker.network: proxy
       traefik.enable: "true"
@@ -50,5 +51,5 @@ networks:
 volumes:
   wikijs-postgres-data:
     driver: local
-
-
+  backup:
+    driver: local
