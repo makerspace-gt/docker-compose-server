@@ -48,6 +48,13 @@ services:
       traefik.http.routers.nextcloud.entrypoints: web
       traefik.http.routers.nextcloud.rule: Host(`${NEXTCLOUD_HOSTNAME}`)
       traefik.http.services.nextcloud.loadbalancer.server.port: "80"
+      com.centurylinklabs.watchtower.lifecycle.post-update: |
+        /bin/sh -c 'su -s /bin/sh www-data -c "
+        php occ upgrade &&
+        php occ maintenance:repair --include-expensive &&
+        php occ maintenance:mode --off &&
+        php occ db:add-missing-indices
+        "'
     networks:
       default: null
       proxy: null
