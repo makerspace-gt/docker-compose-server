@@ -173,6 +173,22 @@
           - viewer
           - workflowengine
 
+    - role: roles/vikunja-stack
+      vars:
+        SERVICES_LABELS_TRAEFIK_HOST: "todo.makerspace-gt.de"
+
+        # # Restore Vikunja Backup
+        # # https://vikunja.io/docs/what-to-backup
+        # # https://www.postgresql.org/docs/current/backup-dump.html
+        # # https://restic.readthedocs.io/en/stable/050_restore.html#
+
+        # docker compose --project-directory /opt/containers/vikunja-stack stop vikunja
+        # docker exec resticker restic restore e7947dde:/mnt/volumes/vikunja --target /mnt/volumes/vikunja
+        # docker compose --project-directory /opt/containers/vikunja-stack exec db bash -c "dropdb vikunja -U vikunja"
+        # docker compose --project-directory /opt/containers/vikunja-stack exec db bash -c "createdb vikunja -U vikunja"
+        # docker compose --project-directory /opt/containers/vikunja-stack exec db bash -c "psql -U vikunja vikunja < /var/tmp/vikunja.pg_dump"
+        # docker compose --project-directory /opt/containers/vikunja-stack up -d --force-recreate
+
     - role: roles/wikijs-stack
       vars:
         SERVICES_WIKIJS_LABELS_TRAEFIK_HOST: "`wiki.makerspace-gt.de`"

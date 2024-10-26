@@ -25,6 +25,7 @@ services:
             docker exec zammad-railsserver /docker-entrypoint.sh rails r 'Channel.where(area: "Email::Account").update_all(active: true)'
             docker exec nextcloud-postgres pg_dump --file=/mnt/nextcloud-data/nextcloud.pg_dump --dbname=nextcloud --username=nextcloud
             docker exec wikijs-postgres pg_dump --file=/var/tmp/wikijs.pg_dump --dbname=wikijs --username=wikijs
+            docker exec vikunja-postgres pg_dump --file=/var/tmp/vikunja.pg_dump --dbname=vikunja --username=vikunja
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - restic-backup:/mnt/restic
@@ -32,6 +33,7 @@ services:
       - vaultwarden-data:/mnt/volumes/vaultwarden
       - nextcloud-data:/mnt/volumes/nextcloud
       - wikijs-backup:/mnt/volumes/wikijs
+      - vikunja-data:/mnt/volumes/vikunja
 
   prune:
     container_name: resticker-prune
@@ -81,4 +83,7 @@ volumes:
     external: true
   wikijs-backup:
     name: wikijs-stack_backup
+    external: true
+  vikunja-data:
+    name: vikunja-stack_data
     external: true

@@ -1,0 +1,28 @@
+---
+
+- name: copy docker compose stack
+  ansible.builtin.copy:
+    src: defaults/vikunja-stack
+    dest: /opt/containers
+    mode: '644'
+    force: true
+
+- name: copy .env.j2
+  ansible.builtin.template:
+    src: templates/.env.j2
+    dest: /opt/containers/vikunja-stack/.env
+    mode: '644'
+
+- name: Create data volume
+  community.docker.docker_volume:
+    name: vikunja-stack_data
+
+- name: set file ownership
+  ansible.builtin.file:
+    path: /var/lib/docker/volumes/vikunja-stack_data/_data
+    owner: '1000'
+
+- name: start docker compose stack
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/vikunja-stack
+    state: present
