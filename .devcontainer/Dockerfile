@@ -45,7 +45,7 @@ EOF
  
 # Install pip and ansible-things
 RUN <<EOF
-  pip install --upgrade pip:set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,eol:¶,precedes:«,extends:»
+  pip install --upgrade pip
   pip install $pip_packages
   pip install ansible[azure]
   ansible-galaxy collection install azure.azcollection community.general
