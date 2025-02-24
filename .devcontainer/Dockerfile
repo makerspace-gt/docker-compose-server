@@ -46,7 +46,7 @@ EOF
 # Install pip and ansible-things
 RUN <<EOF
   pip install --upgrade pip
-  pip install $pip_packages
+  pip install ${pip_packages}
   pip install ansible[azure]
   ansible-galaxy collection install azure.azcollection community.general
   pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
