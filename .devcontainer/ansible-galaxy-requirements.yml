@@ -4,5 +4,6 @@ roles:
   - name: weareinteractive.apt
 
 collections:
-  - name: community.docker
   - name: community.general
+  - name: community.docker
+  - name: azure.azcollection
