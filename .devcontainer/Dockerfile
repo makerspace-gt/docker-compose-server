@@ -49,7 +49,7 @@ RUN <<EOF
   pip install ${pip_packages}
   pip install ansible[azure]
   ansible-galaxy collection install azure.azcollection community.general
-  pip install -r ~/.ansible/collections/ansible_collections/azure/azcollection/requirements-azure.txt
+  pip install -r /usr/local/lib/python3.8/dist-packages/a nsible_collections/azure/azcollection/requirements-azure.txt
 EOF
  
 # Install Terraform
