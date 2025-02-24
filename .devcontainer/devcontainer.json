@@ -1,7 +1,13 @@
 {
-  "build": { "dockerfile": "Dockerfile" },
+  "name": "Devcontainer",
+  "image": "mcr.microsoft.com/devcontainers/base:debian",
   "features": {
+    "ghcr.io/devcontainers/features/python:1": {},
+    "ghcr.io/devcontainers-extra/features/ansible:2": {},
+    "ghcr.io/devcontainers/features/terraform:1": {},
+    "ghcr.io/devcontainers/features/azure-cli:1": {},
     "ghcr.io/devcontainers-contrib/features/neovim-homebrew:1": {}
   },
-  "postStartCommand": "bash ./.devcontainer/postStartCommands.sh"
+  "postCreateCommand": "bash ./.devcontainer/postCreateCommands.sh",
+  "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}"
 }
