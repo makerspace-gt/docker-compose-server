@@ -1,0 +1,10 @@
+ansible
+ansible[azure]
+cryptography
+pywinrm
+kerberos
+requests_kerberos
+passlib
+msrest
+PyVmomi
+pymssql
