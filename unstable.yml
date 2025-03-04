@@ -66,30 +66,9 @@
 
     # - role: roles/zammad-stack
 
-        # # Restore Zammad Backup
-        # # https://github.com/DoTheEvo/selfhosted-apps-docker/tree/master/zammad#backup-and-restore
-        # # https://restic.readthedocs.io/en/stable/050_restore.html#
-        # # https://docs.zammad.org/en/latest/install/docker-compose.html#how-to-run-commands-in-the-stack
-
-        # docker compose --project-directory /opt/containers/zammad-stack down --remove-orphans 
-        # docker exec resticker restic restore 74c4f304 --target /
-        # docker compose --project-directory /opt/containers/zammad-stack up -d zammad-postgresql
-        # docker compose --project-directory /opt/containers/zammad-stack exec zammad-postgresql bash -c "dropdb zammad_production -U zammad"
-        # docker compose --project-directory /opt/containers/zammad-stack exec zammad-postgresql bash -c "createdb zammad_production -U zammad"
-        # docker compose --project-directory /opt/containers/zammad-stack exec zammad-postgresql bash -c "psql -U zammad zammad_production < /var/tmp/zammad/zammad_production.pg_dump"
-        # docker compose --project-directory /opt/containers/zammad-stack up -d --force-recreate
-        # docker compose --project-directory /opt/containers/zammad-stack run --rm zammad-railsserver rake zammad:searchindex:rebuild
-
     # - role: roles/vaultwarden
     #   vars:
     #     SERVICES_VAULTWARDEN_ENVIRONMENT_DOMAIN: "bitwarden.makerspace-gt.de"
-
-        # # Restore Vaultwarden Backup
-        # # https://restic.readthedocs.io/en/stable/050_restore.html#
-
-        # docker compose --project-directory /opt/containers/vaultwarden down --remove-orphans 
-        # docker exec resticker restic restore a394d8e5:/mnt/volumes/vaultwarden --target /mnt/volumes/vaultwarden
-        # docker compose --project-directory /opt/containers/vaultwarden up -d --force-recreate
 
     # - role: roles/nextcloud-stack
     #   vars:
@@ -173,19 +152,5 @@
     # - role: roles/wikijs-stack
     #   vars:
     #     SERVICES_WIKIJS_LABELS_TRAEFIK_HOST: "`wiki.makerspace-gt.de`"
-
-        # # Transfer wiki.js
-        # # https://docs.requarks.io/install/transfer
-        # # https://www.postgresql.org/docs/current/backup-dump.html
-        # root@discovery:~# cd /var/docker/wiki.js/
-        # root@discovery:/var/docker/wiki.js# docker-compose stop wiki 
-        # root@discovery:~# docker exec wikijs_db_1 pg_dump wiki -U wikijs > wikibackup.db
-
-        # root@wasdus:~# cd /opt/containers/wikijs-stack/
-        # root@wasdus:/opt/containers/wikijs-stack# docker compose stop wikijs
-        # root@wasdus:/opt/containers/wikijs-stack# docker compose exec wikijs-postgres dropdb -U wikijs wikijs
-        # root@wasdus:/opt/containers/wikijs-stack# docker compose exec wikijs-postgres createdb -U wikijs wikijs
-        # root@wasdus:/opt/containers/wikijs-stack# cat wikibackup.dump | docker exec -i wikijs-stack-wikijs-postgres-1 psql -U wikijs wikijs
-        # root@wasdus:/opt/containers/wikijs-stack# docker compose up -d --force-recreate 
 
     - role: roles/resticker-stack
