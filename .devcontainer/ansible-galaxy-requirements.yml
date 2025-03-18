@@ -2,6 +2,3 @@
 roles:
   - name: nickjj.docker
   - name: weareinteractive.apt
-
-collections:
-  - name: azure.azcollection
