@@ -1,0 +1,14 @@
+---
+locales:
+  - en_US.UTF-8
+  - de_DE.UTF-8
+
+timezone: urope/Berlin
+
+github-usernames:
+  - igami
+  - leon2225
+  - mattn81
+  - bongald
+  - stikkx
+  - ReneHezser
