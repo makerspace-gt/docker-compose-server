@@ -1,0 +1,25 @@
+---
+# Default variables for common-setup role
+
+# Locales to generate
+common_setup_locales:
+  - en_US.UTF-8
+  - de_DE.UTF-8
+
+# Timezone setting
+common_setup_timezone: Europe/Berlin
+
+# GitHub users to import SSH keys from
+common_setup_github_users:
+  - igami
+  - leon2225
+  - mattn81
+  - bongald
+  - stikkx
+  - ReneHezser
+
+# Directory for environment files
+common_setup_env_files_dir: /opt/containers/env_files
+
+# Source for email.env file
+common_setup_email_env_src: defaults/opt/containers/env_files/email.env
