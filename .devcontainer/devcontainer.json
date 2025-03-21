@@ -8,6 +8,6 @@
     "ghcr.io/devcontainers/features/docker-in-docker:1": {},
     "ghcr.io/devcontainers-contrib/features/neovim-homebrew:1": {}
   },
-  "postCreateCommand": "bash ./.devcontainer/postCreateCommands.sh",
+  "postCreateCommand": "ansible-galaxy install -r ./.devcontainer/ansible-galaxy-requirements.yml",
   "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}"
 }
