@@ -1,0 +1,5 @@
+env_file_template: "test_email.env.j2"
+vikunja_db_user: "testuser"
+vikunja_db_pass: "testpassword"
+vikunja_api_url: "http://localhost:3456"
+# or copy the file structure from playbooks/group_vvars/etc-the-files
