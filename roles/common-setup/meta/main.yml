@@ -1,8 +1,0 @@
----
-galaxy_info:
-  author: Michael, Niels
-  description: Common setup tasks for our servers including setting up DE and EN locale, timezone, and SSH keys of users that may access the machines.
-  company: Makerspace GT
-  min_ansible_version: 2.9
-
-dependencies: []

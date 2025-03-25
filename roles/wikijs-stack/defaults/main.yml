@@ -1,4 +1,0 @@
----
-# defaults file for wikijs-stack
-
-SERVICES_WIKIJS_LABELS_TRAEFIK_HOST: "`wikijs.{{ ansible_host }}`"
