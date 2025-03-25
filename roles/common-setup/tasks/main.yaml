@@ -22,13 +22,14 @@
   ignore_errors: yes
   with_items: "{{ common_setup_github_users }}"
 
-- name: Ensure /opt/containers/env_files directory exists
+- name: Ensure directory exists
   ansible.builtin.file:
     path: "{{ common_setup_env_files_dir }}"
     state: directory
     mode: "0755"
 
-- name: Copy email.env
-  ansible.builtin.copy:
-    src: "{{ common_setup_email_env_src }}"
+- name: copy .env.j2
+  ansible.builtin.template:
+    src: templates/email.env.j2
     dest: "{{ common_setup_env_files_dir }}/email.env"
+    mode: "644"
