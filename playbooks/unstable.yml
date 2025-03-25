@@ -5,7 +5,7 @@
 
   roles:
     # basic setup
-    - role: common-setup
+    - role: roles/common-setup
 
     - role: weareinteractive.apt
       vars:
