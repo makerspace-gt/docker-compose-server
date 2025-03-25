@@ -1,3 +1,2 @@
 ---
-
 SERVICES_LABELS_TRAEFIK_HOST: "vikunja.{{ ansible_host }}"

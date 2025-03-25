@@ -6,7 +6,7 @@ galaxy_info:
     > Wenn mehrere Dienste auf demselben Server über Port 80 (für HTTP) oder 443 (für HTTPS) kommunizieren sollen, kann dies zu Konflikten führen, da normalerweise nur ein Dienst einen bestimmten Port zu einem bestimmten Zeitpunkt belegen kann. Hier kommt Traefik ins Spiel und hilft, dieses Problem zu lösen.
 
     > Traefik agiert als Reverse-Proxy und Load-Balancer und ermöglicht es, dass alle eingehenden Anfragen auf Port 80 oder 443 an die richtigen Dienste weitergeleitet werden, basierend auf den von Ihnen konfigurierten Regeln. Dies wird manchmal als “Routing” bezeichnet.
-    
+
     > https://goneuland.de/traefik-v2-3-reverse-proxy-mit-crowdsec-im-stack-einrichten/#33_DOTENV_Konfiguration
 
   license: CC-BY-4.0

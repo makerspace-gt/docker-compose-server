@@ -5,19 +5,19 @@
   ansible.builtin.copy:
     src: defaults/nextcloud-stack
     dest: /opt/containers
-    mode: '644'
+    mode: "644"
     force: true
 
 - name: copy .env.j2
   ansible.builtin.template:
     src: templates/.env.j2
     dest: /opt/containers/nextcloud-stack/.env
-    mode: '644'
+    mode: "644"
 
 - name: Setting vm.overcommit_memory for redis
   ansible.posix.sysctl:
     name: vm.overcommit_memory
-    value: '1'
+    value: "1"
     # state: present
     sysctl_set: yes
     # sysctl_file: "/etc/sysctl.conf"
@@ -54,7 +54,6 @@
 - name: Manage occ tasks if NEXTCLOUD_OCC_COMMANDS is defined
   include_tasks: occ.yml
   when: NEXTCLOUD_OCC_COMMANDS is defined
-
-# root@1a0ca58aa6ef:/var/spool/cron/crontabs# cat www-data 
+# root@1a0ca58aa6ef:/var/spool/cron/crontabs# cat www-data
 # */5 * * * * php -f /var/www/html/cron.php
 # * */6 * * * php occ preview:pre-generate

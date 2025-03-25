@@ -1,5 +1,4 @@
 services:
-
   postgres:
     container_name: nextcloud-postgres
     image: pgautoupgrade/pgautoupgrade:latest

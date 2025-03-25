@@ -1,5 +1,4 @@
 services:
-
   db:
     container_name: vikunja-postgres
     image: pgautoupgrade/pgautoupgrade:latest
@@ -47,7 +46,7 @@ services:
       traefik.http.routers.vikunja.entrypoints: web
       traefik.http.routers.vikunja.rule: Host(`${SERVICES_LABELS_TRAEFIK_HOST}`)
       traefik.http.services.vikunja.loadbalancer.server.port: "3456"
-    volumes: 
+    volumes:
       - data:/app/vikunja/files
     networks:
       default: null

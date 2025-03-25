@@ -9,14 +9,14 @@
   ansible.builtin.copy:
     src: defaults/vaultwarden
     dest: /opt/containers
-    mode: '644'
+    mode: "644"
     force: true
 
 - name: copy .env.j2
   ansible.builtin.template:
     src: templates/.env.j2
     dest: /opt/containers/vaultwarden/.env
-    mode: '644'
+    mode: "644"
 
 - name: start docker compose stack
   community.docker.docker_compose_v2:

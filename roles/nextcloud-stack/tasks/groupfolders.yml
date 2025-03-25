@@ -39,4 +39,3 @@
 - name: Set groupfolder permissions
   ansible.builtin.command: docker exec --user www-data nextcloud php occ groupfolders:group {{ item.0.id }} {{ item.1 | dict2items | map(attribute='key') | list | first | regex_replace(' ', '\\ ') }} {{ item.1 | dict2items | map(attribute='value') | list | first }}
   loop: "{{ q('ansible.builtin.subelements', NEXTCLOUD_DESIRED_GROUPFOLDERS_WITH_IDS, 'groups', {'skip_missing': True}) }}"
-
