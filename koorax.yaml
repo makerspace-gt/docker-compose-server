@@ -1,0 +1,64 @@
+---
+- name: deploy it infrastructure servers
+  hosts: koorax
+  remote_user: root
+
+  pre_tasks:
+
+    - name: Ensure a locale exists
+      community.general.locale_gen:
+        name: '{{ item }}'
+      with_items:
+        - en_US.UTF-8
+        - de_DE.UTF-8
+
+    - name: Set timezone to Europe/Berlin
+      community.general.timezone:
+        name: Europe/Berlin
+
+    - name: Set hostname
+      ansible.builtin.hostname:
+        name: "{{ ansible_host }}"
+
+    - name: import ssh keys for root
+      # https://stackoverflow.com/a/48882051
+      ansible.posix.authorized_key:
+        user: root
+        key: https://github.com/{{ item }}.keys
+        comment: '{{ item }}'
+      ignore_errors: yes
+      with_items:
+        - igami         # Michael
+        - leon2225      # Leon
+        - mattn81       # Martin
+        - bongald       # Marc
+        - stikkx        # Markus
+        - ReneHezser    # René H.
+        - nielsfechtel  # Niels
+
+    - name: Ensure /opt/containers/env_files directory exists
+      ansible.builtin.file:
+        path: /opt/containers/env_files
+        state: directory
+        mode: '0755'
+
+  roles:
+
+    - role: weareinteractive.apt
+      vars: 
+        apt_upgrade: dist
+        apt_unattended_upgrades_automatic_reboot: yes
+        apt_unattended_upgrades_automatic_reboot_time: 02:00
+
+    - role: nickjj.docker
+
+    - role: roles/watchtower
+
+    - role: roles/traefik-crowdsec-stack
+      vars:
+        # Service Traefik
+        SERVICES_TRAEFIK_IMAGE_VERSION: latest
+        SERVICES_TRAEFIK_LABELS_TRAEFIK_HOST: "`traefik.{{ ansible_host }}`"
+        SERVICES_TRAEFIK_CERTIFICATESRESOLVERS_EMAIL: cyber@makerspace-gt.de
+
+    # - role: roles/resticker-stack
