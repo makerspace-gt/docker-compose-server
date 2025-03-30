@@ -1,0 +1,20 @@
+---
+# tasks file for uptime-kuma
+
+- name: copy docker compose stack
+  ansible.builtin.copy:
+    src: defaults/uptime-kuma
+    dest: /opt/containers
+    mode: '644'
+    force: true
+
+- name: copy .env.j2
+  ansible.builtin.template:
+    src: templates/.env.j2
+    dest: /opt/containers/uptime-kuma/.env
+    mode: '644'
+
+- name: start docker compose stack
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/uptime-kuma
+    state: present
