@@ -68,4 +68,8 @@
         SERVICES_TRAEFIK_LABELS_TRAEFIK_HOST: "`traefik.{{ ansible_host }}`"
         SERVICES_TRAEFIK_CERTIFICATESRESOLVERS_EMAIL: cyber@makerspace-gt.de
 
+    - role: roles/uptime-kuma
+      vars:
+        SERVICES_ENVIRONMENT_DOMAIN: "uptime-kuma.makerspace-gt.de"
+
     # - role: roles/resticker-stack

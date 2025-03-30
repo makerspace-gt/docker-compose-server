@@ -1,0 +1,5 @@
+---
+# defaults file for uptime-kuma
+
+SERVICES_ENVIRONMENT_DOMAIN: "uptime-kuma.{{ ansible_host }}"
+SERVICES_LABELS_TRAEFIK_HOST: "`{{ SERVICES_ENVIRONMENT_DOMAIN }}`"
