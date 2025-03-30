@@ -1,3 +1,5 @@
+# ansible-playbook -i hosts koorax.yaml --ask-vault-pass
+
 ---
 - name: deploy it infrastructure servers
   hosts: koorax
