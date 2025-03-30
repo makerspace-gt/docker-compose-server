@@ -42,6 +42,11 @@
         state: directory
         mode: '0755'
 
+    - name: copy email.env
+      ansible.builtin.copy:
+        src: defaults/opt/containers/env_files/email.env
+        dest: /opt/containers/env_files/email.env
+
   roles:
 
     - role: weareinteractive.apt
