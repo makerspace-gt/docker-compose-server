@@ -2,6 +2,9 @@
 
 Installation:  
 
+## Backup- und Restore-Prozess
+Siehe [Wiki-Artikel](https://wiki.makerspace-gt.de/de/IT-Infrastruktur/Backup-selfhosted).
+
 ## ToDo
 
 - [ ] discourse
