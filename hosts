@@ -11,7 +11,7 @@ forum.makerspace-gt.de
 # discourse-mksp.4830.org
 
 [octoprint]
-octoprint
+192.168.1.254 ansible_user=maker ansible_password=maker ansible_become=true
 
 [unstable]
 unstable.makerspace-gt.de
