@@ -1,0 +1,21 @@
+---
+# tasks file for octoprint
+
+# copy docker compose stack
+- name: copy docker compose stack
+  ansible.builtin.copy:
+    src: defaults/octoprint
+    dest: /opt/containers
+    mode: '644'
+    force: true
+
+# - name: copy .env.j2
+#   ansible.builtin.template:
+#     src: templates/.env.j2
+#     dest: /opt/containers/octoprint/.env
+#     mode: '644'
+
+- name: start docker compose stack
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/octoprint
+    state: present

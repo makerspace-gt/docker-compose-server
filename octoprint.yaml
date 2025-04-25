@@ -1,0 +1,32 @@
+---
+- name: deploy it infrastructure servers
+  hosts: octoprint
+
+  pre_tasks:
+
+    - name: Ensure a locale exists
+      community.general.locale_gen:
+        name: '{{ item }}'
+      with_items:
+        - en_US.UTF-8
+        - de_DE.UTF-8
+
+    - name: Set timezone to Europe/Berlin
+      community.general.timezone:
+        name: Europe/Berlin
+
+    - name: Set hostname
+      ansible.builtin.hostname:
+        name: "{{ ansible_host }}"
+
+  roles:
+
+    - role: weareinteractive.apt
+      vars: 
+        apt_upgrade: dist
+        apt_unattended_upgrades_automatic_reboot: yes
+        apt_unattended_upgrades_automatic_reboot_time: 02:00
+
+    - role: nickjj.docker
+
+    - role: roles/octoprint

@@ -1,0 +1,64 @@
+---
+
+x-common: &octoprint-common
+  image: octoprint/octoprint
+  restart: unless-stopped
+  healthcheck:
+    test: "curl -f http://localhost/ || exit 1"
+
+services:
+
+  traefik:
+    container_name: traefik
+    image: traefik:latest
+    restart: unless-stopped
+    command: --providers.docker --api.insecure=true
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  octoprint-i3mega:
+    container_name: octoprint-i3mega
+    <<: *octoprint-common
+    devices:
+      - /dev/serial/by-id/usb-Silicon_Labs_CP2102_USB_to_UART_Bridge_Controller_0001-if00-port0:/dev/ttyUSB0
+    volumes:
+      - ./octoprint:/octoprint
+      - ./config/config.yaml:/octoprint/octoprint/config.yaml
+      - ./config/users.yaml:/octoprint/octoprint/users.yaml
+      - ./printerProfiles/i3mega.profile:/octoprint/octoprint/printerProfiles/_default.profile
+    labels:
+      - "traefik.http.routers.i3mega.rule=PathPrefix(`/i3mega`)"
+      - "traefik.http.middlewares.i3mega.stripprefix.prefixes=/i3mega"
+      - "traefik.http.routers.i3mega.middlewares=i3mega"
+
+  octoprint-cr10:
+    container_name: octoprint-cr10
+    <<: *octoprint-common
+    devices:
+      - /dev/serial/by-id/usb-FTDI_FT232R_USB_UART_AL03NPQY-if00-port0:/dev/ttyUSB0
+    volumes:
+      - ./octoprint:/octoprint
+      - ./config/config.yaml:/octoprint/octoprint/config.yaml
+      - ./config/users.yaml:/octoprint/octoprint/users.yaml
+      - ./printerProfiles/cr10.profile:/octoprint/octoprint/printerProfiles/_default.profile
+    labels:
+      - "traefik.http.routers.cr10.rule=PathPrefix(`/cr10`)"
+      - "traefik.http.middlewares.cr10.stripprefix.prefixes=/cr10"
+      - "traefik.http.routers.cr10.middlewares=cr10"
+
+  octoprint-sv06:
+    container_name: octoprint-sv06
+    <<: *octoprint-common
+    devices:
+      - /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0:/dev/ttyUSB0
+    volumes:
+      - ./octoprint:/octoprint
+      - ./config/config.yaml:/octoprint/octoprint/config.yaml
+      - ./config/users.yaml:/octoprint/octoprint/users.yaml
+      - ./printerProfiles/sv06.profile:/octoprint/octoprint/printerProfiles/_default.profile
+    labels:
+      - "traefik.http.routers.sv06.rule=PathPrefix(`/sv06`)"
+      - "traefik.http.middlewares.sv06.stripprefix.prefixes=/sv06"
+      - "traefik.http.routers.sv06.middlewares=sv06"

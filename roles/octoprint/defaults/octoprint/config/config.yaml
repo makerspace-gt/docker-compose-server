@@ -1,0 +1,85 @@
+accessControl:
+  autologinAs: maker
+  autologinHeadsupAcknowledged: true
+  autologinLocal: true
+  localNetworks:
+    - 172.18.0.0/24
+api:
+  key: XwVKFuPRpRZLcgy79D8TKrCwFfZMwrzykhoc_4S2wQA
+feature:
+  sdSupport: false
+plugins:
+  _disabled:
+  - portlister
+  - portretry
+  announcements:
+    _config_version: 1
+    channels:
+      _blog:
+        read_until: 1744887600
+      _important:
+        read_until: 1698310200
+      _octopi:
+        read_until: 1684929600
+      _plugins:
+        read_until: 1745193600
+      _releases:
+        read_until: 1745314200
+  classicwebcam:
+    _config_version: 1
+  discovery:
+    upnpUuid: e86b9078-5d44-43d1-b05b-2fd1821f02a6
+  errortracking:
+    unique_id: 11e47855-888f-4768-8f69-0ac32b9855bf
+  gcodeviewer:
+    _config_version: 1
+  pluginmanager:
+    repository_restricted: false
+  softwareupdate:
+    _config_version: 9
+  tracking:
+    enabled: false
+    unique_id: c219623a-e2be-4858-982f-4c8abf0ea570
+  virtual_printer:
+    _config_version: 1
+printerProfiles:
+  default: _default
+serial:
+  autoconnect: true
+  port: /dev/ttyUSB0
+server:
+  commands:
+    systemRestartCommand: s6-svc -r /var/run/s6/services/octoprint
+  firstRun: false
+  onlineCheck:
+    enabled: false
+  pluginBlacklist:
+    enabled: true
+  secretKey: 79c217db077c83df1ccd5fac6a326245df6ef9ad2017dfb87e4e1e6755419cd0
+  seenWizards:
+    backup: null
+    classicwebcam: 1
+    corewizard: 4
+    tracking: null
+temperature:
+  profiles:
+  - bed: 100
+    chamber: null
+    extruder: 255
+    name: ABS
+  - bed: 60
+    chamber: null
+    extruder: 220
+    name: PLA
+  - bed: 85
+    chamber: 0
+    extruder: 230
+    name: PETG
+  - bed: 50
+    chamber: 0
+    extruder: 230
+    name: TPU
+webcam:
+  timelapseEnabled: false
+  watermark: false
+  webcamEnabled: false
