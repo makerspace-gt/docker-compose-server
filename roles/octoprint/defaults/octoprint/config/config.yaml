@@ -1,9 +1,3 @@
-accessControl:
-  autologinAs: maker
-  autologinHeadsupAcknowledged: true
-  autologinLocal: true
-  localNetworks:
-    - 172.18.0.0/24
 api:
   key: XwVKFuPRpRZLcgy79D8TKrCwFfZMwrzykhoc_4S2wQA
 feature:
