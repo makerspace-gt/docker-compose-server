@@ -12,7 +12,11 @@ services:
     container_name: traefik
     image: traefik:latest
     restart: unless-stopped
-    command: --providers.docker --api.insecure=true
+    command:
+      --providers.docker
+      --api.insecure=true
+      --entryPoints.web.address=:80
+      --entryPoints.web.transport.respondingTimeouts.readTimeout=0
     ports:
       - "80:80"
     volumes:
