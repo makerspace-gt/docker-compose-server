@@ -3,53 +3,12 @@
   hosts: wasber
   remote_user: root
 
-  pre_tasks:
-
-    - name: Ensure a locale exists
-      community.general.locale_gen:
-        name: '{{ item }}'
-      with_items:
-        - en_US.UTF-8
-        - de_DE.UTF-8
-
-    - name: Set timezone to Europe/Berlin
-      community.general.timezone:
-        name: Europe/Berlin
-
-    - name: Set hostname
-      ansible.builtin.hostname:
-        name: "{{ ansible_host }}"
-
-    - name: import ssh keys for root
-      # https://stackoverflow.com/a/48882051
-      ansible.posix.authorized_key:
-        user: root
-        key: https://github.com/{{ item }}.keys
-        comment: '{{ item }}'
-      ignore_errors: yes
-      with_items:
-        - igami
-        - leon2225
-        - mattn81
-        - bongald
-        - stikkx
-        - ReneHezser
-
-    - name: Ensure /opt/containers/env_files directory exists
-      ansible.builtin.file:
-        path: /opt/containers/env_files
-        state: directory
-        mode: '0755'
-
-    - name: copy email.env
-      ansible.builtin.copy:
-        src: defaults/opt/containers/env_files/email.env
-        dest: /opt/containers/env_files/email.env
-
   roles:
+    # basic setup
+    - role: roles/common-setup
 
     - role: weareinteractive.apt
-      vars: 
+      vars:
         apt_upgrade: dist
         apt_unattended_upgrades_automatic_reboot: yes
         apt_unattended_upgrades_automatic_reboot_time: 02:00
@@ -74,7 +33,7 @@
       # # https://restic.readthedocs.io/en/stable/050_restore.html#
       # # https://docs.zammad.org/en/latest/install/docker-compose.html#how-to-run-commands-in-the-stack
 
-      # docker compose --project-directory /opt/containers/zammad-stack down --remove-orphans 
+      # docker compose --project-directory /opt/containers/zammad-stack down --remove-orphans
       # docker exec resticker restic restore 74c4f304:/mnt/volumes/zammad --include zammad_production.pg_dump --target /mnt/volumes/zammad
       # docker compose --project-directory /opt/containers/zammad-stack up -d zammad-postgresql
       # docker compose --project-directory /opt/containers/zammad-stack exec zammad-postgresql bash -c "dropdb zammad_production -U zammad"
@@ -90,28 +49,28 @@
       # # Restore Vaultwarden Backup
       # # https://restic.readthedocs.io/en/stable/050_restore.html#
 
-      # docker compose --project-directory /opt/containers/vaultwarden down --remove-orphans 
+      # docker compose --project-directory /opt/containers/vaultwarden down --remove-orphans
       # docker exec resticker restic restore a394d8e5:/mnt/volumes/vaultwarden --target /mnt/volumes/vaultwarden
       # docker compose --project-directory /opt/containers/vaultwarden up -d --force-recreate
 
     - role: roles/nextcloud-stack
       vars:
         NEXTCLOUD_OCC_COMMANDS:
-        - config:system:set overwriteprotocol --value="https"
-        - config:system:set maintenance_window_start --type=integer --value=1
-        - db:add-missing-indices
-        - config:system:set default_language --value="de"
-        - config:system:set default_locale --value="de_DE"
-        - config:system:set default_phone_region --value="DE"
-        - config:system:set default_timezone --value="Europe/Berlin"
-        - config:system:set upgrade.disable-web --type boolean --value true
-        - config:system:set simpleSignUpLink.shown --type boolean --value false
-        - config:system:set trusted_domains 1 --value={{ NEXTCLOUD_HOSTNAME }}
-        - config:app:set dav generateBirthdayCalendar --value="no"
-        - config:app:set registration admin_approval_required --value="yes"
-        - config:app:set registration registered_user_group --value="makerspace-gt"
-        - group:adduser makerspace-gt makerspace-gt
-        - user:setting makerspace-gt settings email cyber@makerspace-gt.de
+          - config:system:set overwriteprotocol --value="https"
+          - config:system:set maintenance_window_start --type=integer --value=1
+          - db:add-missing-indices
+          - config:system:set default_language --value="de"
+          - config:system:set default_locale --value="de_DE"
+          - config:system:set default_phone_region --value="DE"
+          - config:system:set default_timezone --value="Europe/Berlin"
+          - config:system:set upgrade.disable-web --type boolean --value true
+          - config:system:set simpleSignUpLink.shown --type boolean --value false
+          - config:system:set trusted_domains 1 --value={{ NEXTCLOUD_HOSTNAME }}
+          - config:app:set dav generateBirthdayCalendar --value="no"
+          - config:app:set registration admin_approval_required --value="yes"
+          - config:app:set registration registered_user_group --value="makerspace-gt"
+          - group:adduser makerspace-gt makerspace-gt
+          - user:setting makerspace-gt settings email cyber@makerspace-gt.de
         NEXTCLOUD_DESIRED_GROUPFOLDERS:
           - name: Vorstand
             groups:
@@ -121,16 +80,16 @@
               - makerspace-gt: read write share delete
           - name: home
             groups:
-            - makerspace-gt: read write share delete
+              - makerspace-gt: read write share delete
           - name: hub
             groups:
-            - makerspace-gt: read write share delete
+              - makerspace-gt: read write share delete
           - name: Projekte
             groups:
-            - makerspace-gt: read write share delete
+              - makerspace-gt: read write share delete
           - name: Social Media
             groups:
-            - Social Media: read write share delete
+              - Social Media: read write share delete
         NEXTCLOUD_HOSTNAME: "cloud.makerspace-gt.de"
         NEXTCLOUD_DESIRED_GROUPS:
           - Vorstand
