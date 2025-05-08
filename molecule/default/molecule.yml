@@ -1,0 +1,23 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: debian:bookworm
+    pre_build_image: true
+    memory: "4096m"
+    cpus: 4
+    command: ""
+    # Enable systemd, also needs this filesystem to work
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /etc:/etc
+    privileged: true
+    systemd: true
+    user: root
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
