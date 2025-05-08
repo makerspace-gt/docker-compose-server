@@ -7,5 +7,10 @@
     "ghcr.io/devcontainers-contrib/features/neovim-homebrew:1": {}
   },
   "postCreateCommand": "ansible-galaxy install -r ./.devcontainer/ansible-galaxy-requirements.yml",
-  "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}"
+  "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
+  "settings": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "extensions": ["esbenp.prettier-vscode"]
 }
