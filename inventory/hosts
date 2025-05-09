@@ -1,5 +1,3 @@
-# https://docs.ansible.com/ansible/latest/user_guide/intro_inventory.html
-
 [forum]
 forum.makerspace-gt.de
 # discourse-mksp.4830.org
