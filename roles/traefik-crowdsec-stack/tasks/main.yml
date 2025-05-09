@@ -4,8 +4,8 @@
 # copy docker compose stack
 - name: copy docker compose stack
   ansible.builtin.copy:
-    src: defaults/traefik-crowdsec-stack
-    dest: /opt/containers
+    src: traefik-crowdsec-stack
+    dest: /opt/containers/traefik-crowdsec-stack
     mode: '644'
     force: true
 

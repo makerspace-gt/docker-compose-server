@@ -1,5 +1,4 @@
 services:
-
   crowdsec:
     container_name: ${SERVICES_CROWDSEC_CONTAINER_NAME:-crowdsec}
     env_file: ./config/crowdsec.env
