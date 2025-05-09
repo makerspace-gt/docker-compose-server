@@ -4,8 +4,8 @@
 # copy docker compose stack
 - name: copy docker compose stack
   ansible.builtin.copy:
-    src: defaults/wikijs-stack
-    dest: /opt/containers
+    src: docker-compose.yml
+    dest: /opt/containers/wikijs-stack/docker-compose.yml
     mode: '644'
     force: true
 

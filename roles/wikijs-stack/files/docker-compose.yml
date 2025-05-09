@@ -1,5 +1,4 @@
 services:
-
   wikijs-postgres:
     container_name: wikijs-postgres
     image: pgautoupgrade/pgautoupgrade:latest
