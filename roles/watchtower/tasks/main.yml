@@ -1,11 +1,7 @@
----
-# tasks file for watchtower
-
-# copy docker compose stack
 - name: copy docker compose stack
   ansible.builtin.copy:
-    src: defaults/watchtower
-    dest: /opt/containers
+    src: docker-compose.yml
+    dest: /opt/containers/watchtower/docker-compose.yml
     mode: '644'
     force: true
 
