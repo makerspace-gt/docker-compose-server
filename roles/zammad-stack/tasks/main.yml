@@ -7,8 +7,8 @@
 
 - name: copy docker compose stack
   ansible.builtin.copy:
-    src: defaults/zammad-stack
-    dest: /opt/containers
+    src: docker-compose.yml
+    dest: /opt/containers/zammad-stack/docker-compose.yml
     mode: '644'
     force: true
 

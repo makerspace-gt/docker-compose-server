@@ -38,7 +38,6 @@ x-shared:
       - zammad-redis
 
 services:
-
   zammad-elasticsearch:
     container_name: zammad-elasticsearch
     image: bitnami/elasticsearch:${ELASTICSEARCH_VERSION:-8.14.3}
