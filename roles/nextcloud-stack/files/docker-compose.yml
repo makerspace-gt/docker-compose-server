@@ -1,5 +1,4 @@
 services:
-
   postgres:
     container_name: nextcloud-postgres
     image: pgautoupgrade/pgautoupgrade:latest
@@ -7,7 +6,7 @@ services:
     environment:
       NEXTCLOUD_DATA_DIR: ${NEXTCLOUD_DATA_DIR}
     env_file:
-      - postgres.env
+      - .env
     volumes:
       - nextcloud-postgres-data:/var/lib/postgresql/data
       - nextcloud-data:${NEXTCLOUD_DATA_DIR}:z
@@ -32,10 +31,8 @@ services:
       NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_HOSTNAME}
       PHP_MEMORY_LIMIT: 1024M
     env_file:
-      - postgres.env
-      - admin.env
+      - .env
       - /opt/containers/env_files/email.env
-      - email.env
     labels:
       traefik.docker.network: proxy
       traefik.enable: "true"
@@ -60,7 +57,6 @@ services:
       proxy: null
     volumes:
       - nextcloud-php:/var/www/html:z
-      - ./custom/skeleton:/custom/skeleton:ro
       - nextcloud-data:${NEXTCLOUD_DATA_DIR}:z
       - /etc/localtime:/etc/localtime:ro
 
@@ -77,7 +73,7 @@ services:
       PHP_MEMORY_LIMIT: 1024M
     entrypoint: /cron.sh
     env_file:
-      - postgres.env
+      - .env
     volumes:
       - nextcloud-php:/var/www/html:z
       - nextcloud-data:${NEXTCLOUD_DATA_DIR}:z

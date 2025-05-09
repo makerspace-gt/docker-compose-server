@@ -1,14 +1,16 @@
----
-# tasks file for nextcloud-stack
+- name: Create nextcloud-stack directory
+  ansible.builtin.file:
+    path: /opt/containers/nextcloud-stack
+    state: directory
+    mode: '0755'
 
-- name: copy docker compose stack
+- name: Copy docker compose
   ansible.builtin.copy:
-    src: defaults/nextcloud-stack
-    dest: /opt/containers
-    mode: '644'
-    force: true
+    src: docker-compose.yml
+    dest: /opt/containers/nextcloud-stack/docker-compose.yml
+    mode: '0644'
 
-- name: copy .env.j2
+- name: Copy .env template
   ansible.builtin.template:
     src: templates/.env.j2
     dest: /opt/containers/nextcloud-stack/.env
@@ -54,7 +56,3 @@
 - name: Manage occ tasks if NEXTCLOUD_OCC_COMMANDS is defined
   include_tasks: occ.yml
   when: NEXTCLOUD_OCC_COMMANDS is defined
-
-# root@1a0ca58aa6ef:/var/spool/cron/crontabs# cat www-data 
-# */5 * * * * php -f /var/www/html/cron.php
-# * */6 * * * php occ preview:pre-generate
