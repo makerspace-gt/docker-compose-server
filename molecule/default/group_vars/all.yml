@@ -1,5 +1,23 @@
-env_file_template: "test_email.env.j2"
-vikunja_db_user: "testuser"
-vikunja_db_pass: "testpassword"
-vikunja_api_url: "http://localhost:3456"
-# or copy the file structure from playbooks/group_vvars/etc-the-files
+# global vars from ./inventory/group_vars/all/
+vault_CIFS_HETZNER_NEXTCLOUD_DATA_DEVICE: "testdevice"
+vault_CIFS_HETZNER_NEXTCLOUD_DATA_USERNAME: "testusername"
+vault_CIFS_HETZNER_NEXTCLOUD_DATA_PASSWORD: "testpassword"
+
+# common-setup vars
+vault_SMTP_HOST: "test_host"
+vault_SMTP_PORT: "test_port"
+vault_SMTP_USERNAME: "test_username"
+vault_SMTP_PASSWORD: "test_password"
+vault_SMTP_SENDER: "test_sender"
+vault_SMTP_RECIPIENT: "test_recipient"
+
+# nextcloud-stack vars
+vault_NEXTCLOUD_ADMIN_USER: "test_NEXTCLOUD_ADMIN_USER"
+vault_NEXTCLOUD_ADMIN_PASSWORD: "test_NEXTCLOUD_ADMIN_PASSWORD"
+
+vault_POSTGRES_DB: "test_POSTGRES_DB"
+vault_POSTGRES_USER: "test_POSTGRES_USER"
+vault_POSTGRES_PASSWORD: "test_POSTGRES_PASSWORD"
+
+# vikunja-stack vars
+vault_VIKUNJA_SERVICE_JWTSECRET: "test_vault_VIKUNJA_SERVICE_JWTSECRET"

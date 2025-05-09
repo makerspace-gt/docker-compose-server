@@ -14,10 +14,15 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - /etc:/etc
+      - /run:/run
     privileged: true
     systemd: true
     user: root
 provisioner:
   name: ansible
+  options:
+    vvv: true
+  env:
+    ANSIBLE_ROLES_PATH: ../../roles/:/home/vscode/.ansible/roles//
 verifier:
   name: ansible
