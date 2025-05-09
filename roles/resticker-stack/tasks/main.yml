@@ -3,8 +3,8 @@
 
 - name: copy docker compose stack
   ansible.builtin.copy:
-    src: defaults/resticker-stack
-    dest: /opt/containers
+    src: docker-compose.yml
+    dest: /opt/containers/resticker-stack/docker-compose.yml
     mode: '644'
     force: true
 
