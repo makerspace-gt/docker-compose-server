@@ -1,5 +1,4 @@
 services:
-
   db:
     container_name: vikunja-postgres
     image: pgautoupgrade/pgautoupgrade:latest
@@ -33,7 +32,6 @@ services:
       VIKUNJA_DEFAULTSETTINGS_WEEK_START: 1
     env_file:
       - /opt/containers/env_files/email.env
-      - email.env
       - .env
     labels:
       traefik.docker.network: proxy

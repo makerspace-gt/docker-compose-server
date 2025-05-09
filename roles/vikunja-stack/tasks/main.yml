@@ -2,8 +2,8 @@
 
 - name: copy docker compose stack
   ansible.builtin.copy:
-    src: defaults/vikunja-stack
-    dest: /opt/containers
+    src: docker-compose.yml
+    dest: /opt/containers/vikunja-stack/docker-compose.yml
     mode: '644'
     force: true
 
