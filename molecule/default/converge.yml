@@ -1,2 +1,0 @@
-- name: Run test-playbook
-  ansible.builtin.import_playbook: ../../playbooks/test.yml
