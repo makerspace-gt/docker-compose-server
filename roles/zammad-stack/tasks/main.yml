@@ -1,27 +1,29 @@
----
-# tasks file for zammad-stack
-
-- name: Create zammad-backup volume
-  community.docker.docker_volume:
-    name: zammad-backup
+- name: Ensure directory exists
+  ansible.builtin.file:
+    path: /opt/containers/zammad-stack/
+    state: directory
+    mode: "0755"
 
 - name: copy docker compose stack
   ansible.builtin.copy:
     src: docker-compose.yml
     dest: /opt/containers/zammad-stack/docker-compose.yml
-    mode: '644'
-    force: true
+    mode: "644"
 
 - name: copy .env.j2
   ansible.builtin.template:
     src: templates/.env.j2
     dest: /opt/containers/zammad-stack/.env
-    mode: '644'
+    mode: "644"
+
+- name: Create zammad-backup volume
+  community.docker.docker_volume:
+    name: zammad-backup
 
 - name: Setting vm.max_map_count for Elasticsearch
   ansible.posix.sysctl:
     name: vm.max_map_count
-    value: '262144'
+    value: "262144"
     # state: present
     sysctl_set: yes
     # sysctl_file: "/etc/sysctl.conf"

@@ -1,25 +1,25 @@
 - name: Create nextcloud-stack directory
   ansible.builtin.file:
-    path: /opt/containers/nextcloud-stack
+    path: /opt/containers/nextcloud-stack/
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Copy docker compose
   ansible.builtin.copy:
     src: docker-compose.yml
     dest: /opt/containers/nextcloud-stack/docker-compose.yml
-    mode: '0644'
+    mode: "0644"
 
 - name: Copy .env template
   ansible.builtin.template:
     src: templates/.env.j2
     dest: /opt/containers/nextcloud-stack/.env
-    mode: '644'
+    mode: "644"
 
 - name: Setting vm.overcommit_memory for redis
   ansible.posix.sysctl:
     name: vm.overcommit_memory
-    value: '1'
+    value: "1"
     # state: present
     sysctl_set: yes
     # sysctl_file: "/etc/sysctl.conf"

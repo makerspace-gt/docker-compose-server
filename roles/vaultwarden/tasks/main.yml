@@ -1,22 +1,24 @@
----
-# tasks file for vaultwarden
-
 - name: Create vaultwarden volume
   community.docker.docker_volume:
     name: vaultwarden-data
+
+- name: Ensure directory exists
+  ansible.builtin.file:
+    path: /opt/containers/vaultwarden/
+    state: directory
+    mode: "0755"
 
 - name: copy docker compose stack
   ansible.builtin.copy:
     src: docker-compose.yml
     dest: /opt/containers/vaultwarden/docker-compose.yml
-    mode: '644'
-    force: true
+    mode: "644"
 
 - name: copy .env.j2
   ansible.builtin.template:
     src: templates/.env.j2
     dest: /opt/containers/vaultwarden/.env
-    mode: '644'
+    mode: "644"
 
 - name: start docker compose stack
   community.docker.docker_compose_v2:
