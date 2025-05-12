@@ -5,9 +5,3 @@ Weitere Infos im Wiki: [IT-Infrastruktur Über­sicht](https://wiki.makerspace-g
 
 ## Nutzung
 Ein Devcontainer mit den benötigten Tools ist bereitgestellt.
-
-## ToDo
-- [ ] discourse
-- [ ] fabaccess
-- [x] traefik
-      - [ ] Logrotate
