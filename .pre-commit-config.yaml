@@ -1,8 +1,5 @@
 repos:
-  - repo: local
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.25.1
     hooks:
-      - id: detect-secrets
-        name: detect-secrets
-        entry: detect-secrets-hook
-        language: python
-        types: [text]
+      - id: gitleaks

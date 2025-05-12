@@ -4,7 +4,8 @@
   "features": {
     "ghcr.io/devcontainers-extra/features/ansible:2": {},
     "ghcr.io/devcontainers-contrib/features/neovim-homebrew:1": {},
-    "ghcr.io/prulloac/devcontainer-features/pre-commit:1": {}
+    "ghcr.io/prulloac/devcontainer-features/pre-commit:1": {},
+    "ghcr.io/jsburckhardt/devcontainer-features/gitleaks:1": {}
   },
   "postCreateCommand": "ansible-galaxy install -r ./.devcontainer/ansible-galaxy-requirements.yml --roles-path ~/.ansible/roles",
   "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
