@@ -11,7 +11,9 @@
     "ghcr.io/devcontainers/extra/features/kubectx-kubens:1": {},
     "ghcr.io/rio/features/k9s:1": {},
     "ghcr.io/jsburchkardt/devcontainer-features/flux:1": {},
-    "ghcr.io/jpawlowski/devcontainer-features/cascadia-code:1": {}
+    "ghcr.io/jpawlowski/devcontainer-features/cascadia-code:1": {},
+    "ghcr.io/robbert229/devcontainer-features/opentofu:1": {},
+    "ghcr.io/devcontainers-extra/features/ansible:2": {}
   },
   "postCreateCommand": "sudo apt-get update && sudo apt-get install -y iputils-ping netcat-openbsd",
   "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
@@ -25,4 +27,3 @@
     }
   }
 }
-
