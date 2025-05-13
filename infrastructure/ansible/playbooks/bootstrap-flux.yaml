@@ -1,0 +1,27 @@
+- name: Check valid cluster input
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Fail if no cluster is provided
+      fail:
+        msg: "You must pass a cluster variable (e.g. -e 'cluster=staging')"
+      when: cluster is not defined
+
+    - name: Ensure only one host is targeted
+      assert:
+        that: groups['all'] | length == 1
+        fail_msg: "You must target exactly one host with --limit"
+
+- name: Bootstrap Flux for {{ cluster }}
+  hosts: all
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: Run flux bootstrap for {{ cluster }}
+      shell: |
+        flux bootstrap github \
+          --owner=makerspace-gt \
+          --repository=it-infrastructure \
+          --path=clusters/{{ cluster }} \
+          --personal
+      when: cluster is defined
