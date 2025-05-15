@@ -1,6 +1,3 @@
----
-# defaults file for zammad-stack
-
 ELASTICSEARCH_VERSION: latest
 MEMCACHE_VERSION: latest
 POSTGRES_IMAGE: pgautoupgrade/pgautoupgrade

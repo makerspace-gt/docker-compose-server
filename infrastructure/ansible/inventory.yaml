@@ -1,0 +1,10 @@
+all:
+  children:
+    staging:
+      hosts:
+        makerspace-staging:
+          ansible_host: staging.makerspace-gt.de
+    uptime:
+      hosts:
+        makerspace-uptime:
+          ansible_host: uptime.makerspace-gt.de

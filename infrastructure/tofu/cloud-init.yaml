@@ -1,0 +1,14 @@
+hostname: makerspace-staging
+users:
+  - name: ubuntu
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    shell: /bin/bash
+    groups: sudo
+    ssh_import_id:
+      - gh:nielsfechtel
+      - gh:leon2225
+      - gh:igami
+      - gh:mattn81
+      - gh:ReneHezser
+disable_root: true
+ssh_pwauth: false
