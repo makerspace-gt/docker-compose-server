@@ -1,6 +1,3 @@
----
-# defaults file for traefik-crowdsec-stack
-
 # Service Crowdsec
 SERVICES_CROWDSEC_CONTAINER_NAME: crowdsec
 SERVICES_CROWDSEC_HOSTNAME: crowdsec
@@ -30,3 +27,7 @@ NETWORKS_PROXY_NAME: proxy
 NETWORKS_PROXY_SUBNET_IPV4: 172.30.0.0/16
 NETWORKS_CROWDSEC_NAME: crowdsec
 NETWORKS_CROWDSEC_SUBNET_IPV4: 172.31.0.0/16
+
+# crowdsec config
+PGID: "1000"
+COLLECTIONS: "crowdsecurity/traefik crowdsecurity/http-cve crowdsecurity/whitelist-good-actors crowdsecurity/postfix crowdsecurity/dovecot crowdsecurity/nginx"

@@ -1,0 +1,46 @@
+# Common setup tasks for servers
+
+- name: Ensure a locale exists
+  community.general.locale_gen:
+    name: "{{ item }}"
+  with_items: "{{ common_setup_locales }}"
+
+- name: Set timezone
+  community.general.timezone:
+    name: "{{ common_setup_timezone }}"
+
+- name: Set hostname
+  ansible.builtin.hostname:
+    name: "{{ ansible_host }}"
+
+- name: Import SSH keys for root
+  ansible.posix.authorized_key:
+    user: root
+    key: https://github.com/{{ item }}.keys
+    comment: "{{ item }}"
+  ignore_errors: yes
+  with_items: "{{ common_setup_github_users }}"
+
+- name: Ensure directory exists
+  ansible.builtin.file:
+    path: "{{ common_setup_env_files_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: copy .env.j2
+  ansible.builtin.template:
+    src: email.env.j2
+    dest: "{{ common_setup_env_files_dir }}/email.env"
+    mode: "644"
+
+- name: Enable unattended upgrades with automatic reboot
+  ansible.builtin.include_role:
+    name: weareinteractive.apt
+  vars:
+    apt_upgrade: dist
+    apt_unattended_upgrades_automatic_reboot: yes
+    apt_unattended_upgrades_automatic_reboot_time: "{{ common_setup_automatic_reboot_time }}"
+
+- name: Install and configure Docker
+  ansible.builtin.include_role:
+    name: nickjj.docker

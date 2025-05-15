@@ -1,0 +1,19 @@
+services:
+  watchtower:
+    container_name: watchtower
+    image: containrrr/watchtower:latest
+    restart: unless-stopped
+    environment:
+      WATCHTOWER_SCHEDULE: 0 0 4 * * 2 # check tuesdays at 04:00 o'clock
+      # WATCHTOWER_LABEL_ENABLE: true
+      WATCHTOWER_ROLLING_RESTART: true
+      WATCHTOWER_CLEANUP: true
+      WATCHTOWER_NOTIFICATION_REPORT: true
+      # WATCHTOWER_NO_STARTUP_MESSAGE: true
+      WATCHTOWER_LIFECYCLE_HOOKS: true
+    env_file:
+      - /opt/containers/env_files/email.env
+      - .env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro

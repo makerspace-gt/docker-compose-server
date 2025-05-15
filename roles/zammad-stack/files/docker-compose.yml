@@ -1,0 +1,135 @@
+---
+x-shared:
+  zammad-service: &zammad-service
+    environment: &zammad-environment
+      MEMCACHE_SERVERS: ${MEMCACHE_SERVERS:-zammad-memcached:11211}
+      POSTGRESQL_DB: ${POSTGRES_DB:-zammad_production}
+      POSTGRESQL_HOST: ${POSTGRES_HOST:-zammad-postgresql}
+      POSTGRESQL_USER: ${POSTGRES_USER:-zammad}
+      POSTGRESQL_PASS: ${POSTGRES_PASS:-zammad}
+      POSTGRESQL_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRESQL_OPTIONS: ${POSTGRESQL_OPTIONS:-?pool=50}
+      POSTGRESQL_DB_CREATE:
+      REDIS_URL: ${REDIS_URL:-redis://zammad-redis:6379}
+      TZ: "${TZ:-Europe/Berlin}"
+      # Allow passing in these variables via .env:
+      AUTOWIZARD_JSON:
+      AUTOWIZARD_RELATIVE_PATH:
+      ELASTICSEARCH_ENABLED:
+      ELASTICSEARCH_HOST:
+      ELASTICSEARCH_PORT:
+      ELASTICSEARCH_SCHEMA:
+      ELASTICSEARCH_NAMESPACE:
+      ELASTICSEARCH_REINDEX:
+      ELASTICSEARCH_SSL_VERIFY:
+      NGINX_PORT:
+      NGINX_SERVER_NAME:
+      NGINX_SERVER_SCHEME:
+      RAILS_TRUSTED_PROXIES:
+      ZAMMAD_WEB_CONCURRENCY:
+      ZAMMAD_SESSION_JOBS:
+      ZAMMAD_PROCESS_SCHEDULED:
+      ZAMMAD_PROCESS_DELAYED_JOBS_WORKERS:
+    image: ${IMAGE_REPO:-ghcr.io/zammad/zammad}:${VERSION:-6.3.1-95}
+    restart: ${RESTART:-always}
+    depends_on:
+      - zammad-memcached
+      - zammad-postgresql
+      - zammad-redis
+
+services:
+  zammad-elasticsearch:
+    container_name: zammad-elasticsearch
+    image: bitnami/elasticsearch:${ELASTICSEARCH_VERSION:-8.14.3}
+    restart: ${RESTART:-always}
+    volumes:
+      - elasticsearch-data:/bitnami/elasticsearch/data
+
+  zammad-init:
+    <<: *zammad-service
+    container_name: zammad-init
+    command: ["zammad-init"]
+    depends_on:
+      - zammad-postgresql
+    restart: on-failure
+    user: 0:0
+
+  zammad-memcached:
+    container_name: zammad-memcached
+    command: memcached -m 256M
+    image: memcached:${MEMCACHE_VERSION:-1.6.29-alpine}
+    restart: ${RESTART:-always}
+
+  zammad-nginx:
+    <<: *zammad-service
+    container_name: zammad-nginx
+    command: ["zammad-nginx"]
+    expose:
+      - "${NGINX_PORT:-8080}"
+    depends_on:
+      - zammad-railsserver
+    labels:
+      traefik.docker.network: proxy
+      traefik.enable: "true"
+      traefik.http.routers.zammad-secure.entrypoints: websecure
+      traefik.http.routers.zammad-secure.middlewares: default@file
+      traefik.http.routers.zammad-secure.rule: Host(${SERVICES_ZAMMAD_LABELS_TRAEFIK_HOST})
+      traefik.http.routers.zammad-secure.service: zammad
+      traefik.http.routers.zammad-secure.tls: "true"
+      traefik.http.routers.zammad-secure.tls.certresolver: http_resolver
+      traefik.http.routers.zammad.entrypoints: web
+      traefik.http.routers.zammad.rule: Host(${SERVICES_ZAMMAD_LABELS_TRAEFIK_HOST})
+      traefik.http.services.zammad.loadbalancer.server.port: "8080"
+    networks:
+      default: null
+      proxy: null
+
+  zammad-postgresql:
+    container_name: zammad-postgresql
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-zammad_production}
+      POSTGRES_USER: ${POSTGRES_USER:-zammad}
+      POSTGRES_PASSWORD: ${POSTGRES_PASS:-zammad}
+    image: ${POSTGRES_IMAGE:-postgres}:${POSTGRES_VERSION:-15.7-alpine}
+    restart: ${RESTART:-always}
+    volumes:
+      - postgresql-data:/var/lib/postgresql/data
+      - zammad-backup:/var/tmp/zammad
+
+  zammad-railsserver:
+    <<: *zammad-service
+    container_name: zammad-railsserver
+    command: ["zammad-railsserver"]
+
+  zammad-redis:
+    container_name: zammad-redis
+    image: redis:${REDIS_VERSION:-7.2.5-alpine}
+    restart: ${RESTART:-always}
+    volumes:
+      - redis-data:/data
+
+  zammad-scheduler:
+    <<: *zammad-service
+    container_name: zammad-scheduler
+    command: ["zammad-scheduler"]
+
+  zammad-websocket:
+    <<: *zammad-service
+    container_name: zammad-websocket
+    command: ["zammad-websocket"]
+
+networks:
+  default:
+  proxy:
+    external: true
+
+volumes:
+  elasticsearch-data:
+    driver: local
+  postgresql-data:
+    driver: local
+  redis-data:
+    driver: local
+  zammad-backup:
+    name: zammad-backup
+    external: true

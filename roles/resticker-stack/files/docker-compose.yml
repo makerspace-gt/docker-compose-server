@@ -1,0 +1,87 @@
+services:
+  backup:
+    container_name: resticker
+    image: mazzolino/restic
+    hostname: ${HOSTNAME}
+    restart: unless-stopped
+    environment:
+      RUN_ON_STARTUP: "true"
+      BACKUP_CRON: "0 30 3 * * *"
+      # RESTIC_REPOSITORY: /mnt/restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
+      RESTIC_BACKUP_SOURCES: /mnt/volumes
+      RESTIC_BACKUP_ARGS: >-
+        --tag docker-volumes
+      RESTIC_FORGET_ARGS: >-
+        --keep-last 10
+        --keep-daily 7
+        --keep-weekly 5
+        --keep-monthly 12
+      PRE_COMMANDS: |-
+            docker exec zammad-railsserver /docker-entrypoint.sh rails r 'Channel.where(area: "Email::Account").update_all(active: false)'
+            docker exec zammad-postgresql pg_dump --file=/var/tmp/zammad/zammad_production.pg_dump --dbname=zammad_production --username=zammad
+            docker exec zammad-railsserver /docker-entrypoint.sh rails r 'Channel.where(area: "Email::Account").update_all(active: true)'
+            docker exec nextcloud-postgres pg_dump --file=/mnt/nextcloud-data/nextcloud.pg_dump --dbname=nextcloud --username=nextcloud
+            docker exec wikijs-postgres pg_dump --file=/var/tmp/wikijs.pg_dump --dbname=wikijs --username=wikijs
+            docker exec vikunja-postgres pg_dump --file=/var/tmp/vikunja.pg_dump --dbname=vikunja --username=vikunja
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - restic-backup:/mnt/restic
+      - zammad-backup:/mnt/volumes/zammad
+      - vaultwarden-data:/mnt/volumes/vaultwarden
+      - nextcloud-data:/mnt/volumes/nextcloud
+      - wikijs-backup:/mnt/volumes/wikijs
+      - vikunja-data:/mnt/volumes/vikunja
+
+  prune:
+    container_name: resticker-prune
+    image: mazzolino/restic
+    hostname: ${HOSTNAME}
+    restart: unless-stopped
+    environment:
+      SKIP_INIT: "true"
+      RUN_ON_STARTUP: "true"
+      PRUNE_CRON: "0 0 4 * * *"
+      # RESTIC_REPOSITORY: /mnt/restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
+    volumes:
+      - restic-backup:/mnt/restic
+
+  check:
+    container_name: resticker-check
+    image: mazzolino/restic
+    hostname: ${HOSTNAME}
+    restart: unless-stopped
+    environment:
+      SKIP_INIT: "true"
+      RUN_ON_STARTUP: "false"
+      CHECK_CRON: "0 15 5 * * *"
+      RESTIC_CHECK_ARGS: >-
+        --read-data-subset=10%
+      # RESTIC_REPOSITORY: /mnt/restic
+      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
+    volumes:
+      - restic-backup:/mnt/restic
+
+volumes:
+  restic-backup:
+    driver: local
+    driver_opts:
+      type: cifs
+      o: "username=${CIFS_HETZNER_NEXTCLOUD_DATA_USERNAME},password=${CIFS_HETZNER_NEXTCLOUD_DATA_PASSWORD},uid=33,gid=33,dir_mode=0770,file_mode=0770"
+      device: "${CIFS_HETZNER_NEXTCLOUD_DATA_DEVICE}"
+  zammad-backup:
+    name: zammad-backup
+    external: true
+  vaultwarden-data:
+    name: vaultwarden-data
+    external: true
+  nextcloud-data:
+    name: nextcloud-stack_nextcloud-data
+    external: true
+  wikijs-backup:
+    name: wikijs-stack_backup
+    external: true
+  vikunja-data:
+    name: vikunja-stack_data
+    external: true
