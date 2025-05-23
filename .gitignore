@@ -1,1 +1,15 @@
 **/*gitleaks*
+**/*temp*
+
+*.envrc*
+env.*
+.env
+*.env.*
+*.secret
+*.pem
+*.key
+*.crt
+
+**/kubeconfig
+**/.kube/config
+*kubeconfig*
