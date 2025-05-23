@@ -1,0 +1,22 @@
+- name: Configure machines
+  vars:
+    rke2_version: v1.33.1+rke2r1
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Download and install RKE2
+      shell: |
+        curl -sfL https://get.rke2.io | INSTALL_RKE2_VERSION={{ rke2_version }} sh -
+      args:
+        creates: /usr/local/bin/rke2
+
+    - name: Install Flux CLI
+      shell: |
+        curl -s https://fluxcd.io/install.sh | bash
+      args:
+        executable: /bin/bash
+
+    - name: Install Kubernetes CLI
+      ansible.builtin.shell:
+        cmd: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"

@@ -1,0 +1,35 @@
+services:
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    restart: unless-stopped
+    volumes:
+      - vaultwarden-data:/data/
+    env_file:
+      - /opt/containers/env_files/email.env
+      - .env
+    labels:
+      traefik.docker.network: proxy
+      traefik.enable: "true"
+      traefik.http.routers.vaultwarden-secure.entrypoints: websecure
+      traefik.http.routers.vaultwarden-secure.middlewares: default@file
+      traefik.http.routers.vaultwarden-secure.rule: Host(${SERVICES_VAULTWARDEN_LABELS_TRAEFIK_HOST})
+      traefik.http.routers.vaultwarden-secure.service: vaultwarden
+      traefik.http.routers.vaultwarden-secure.tls: "true"
+      traefik.http.routers.vaultwarden-secure.tls.certresolver: http_resolver
+      traefik.http.routers.vaultwarden.entrypoints: web
+      traefik.http.routers.vaultwarden.rule: Host(${SERVICES_VAULTWARDEN_LABELS_TRAEFIK_HOST})
+      traefik.http.services.vaultwarden.loadbalancer.server.port: "80"
+    networks:
+      default: null
+      proxy: null
+
+networks:
+  default:
+  proxy:
+    external: true
+
+volumes:
+  vaultwarden-data:
+    name: vaultwarden-data
+    external: true

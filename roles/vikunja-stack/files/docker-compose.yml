@@ -1,0 +1,64 @@
+services:
+  db:
+    container_name: vikunja-postgres
+    image: pgautoupgrade/pgautoupgrade:latest
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h localhost -U $$POSTGRES_USER"]
+      interval: 2s
+    environment:
+      POSTGRES_PASSWORD: vikunja
+      POSTGRES_USER: vikunja
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - data:/var/tmp
+
+  vikunja:
+    container_name: vikunja
+    image: vikunja/vikunja:latest
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    environment:
+      VIKUNJA_SERVICE_PUBLICURL: https://${SERVICES_LABELS_TRAEFIK_HOST}
+      VIKUNJA_DATABASE_HOST: db
+      VIKUNJA_DATABASE_PASSWORD: vikunja
+      VIKUNJA_DATABASE_TYPE: postgres
+      VIKUNJA_DATABASE_USER: vikunja
+      VIKUNJA_DATABASE_DATABASE: vikunja
+      VIKUNJA_SERVICE_TIMEZONE: Europe/Berlin
+      VIKUNJA_SERVICE_ENABLEPUBLICTEAMS: true
+      VIKUNJA_DEFAULTSETTINGS_WEEK_START: 1
+    env_file:
+      - /opt/containers/env_files/email.env
+      - .env
+    labels:
+      traefik.docker.network: proxy
+      traefik.enable: "true"
+      traefik.http.routers.vikunja-secure.entrypoints: websecure
+      traefik.http.routers.vikunja-secure.middlewares: default@file
+      traefik.http.routers.vikunja-secure.rule: Host(`${SERVICES_LABELS_TRAEFIK_HOST}`)
+      traefik.http.routers.vikunja-secure.service: vikunja
+      traefik.http.routers.vikunja-secure.tls: "true"
+      traefik.http.routers.vikunja-secure.tls.certresolver: http_resolver
+      traefik.http.routers.vikunja.entrypoints: web
+      traefik.http.routers.vikunja.rule: Host(`${SERVICES_LABELS_TRAEFIK_HOST}`)
+      traefik.http.services.vikunja.loadbalancer.server.port: "3456"
+    volumes: 
+      - data:/app/vikunja/files
+    networks:
+      default: null
+      proxy: null
+
+networks:
+  default:
+  proxy:
+    external: true
+
+volumes:
+  data:
+    name: vikunja-stack_data
+    external: true
+  postgres-data:
+    driver: local

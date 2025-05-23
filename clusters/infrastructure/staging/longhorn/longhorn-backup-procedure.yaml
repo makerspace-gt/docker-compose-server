@@ -1,0 +1,10 @@
+apiVersion: longhorn.io/v1beta2
+kind: Backup
+metadata:
+  name: backup
+  namespace: longhorn-system
+spec:
+  backupMode: full
+  snapshotName: snapshot-name-example
+  labels:
+    app: test-app-label
