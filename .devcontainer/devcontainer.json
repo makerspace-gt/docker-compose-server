@@ -1,25 +1,29 @@
 {
   "name": "Devcontainer",
-  "image": "mcr.microsoft.com/devcontainers/base:debian",
+  "image": "mcr.microsoft.com/devcontainers/python:3.9-bookworm",
   "features": {
+    "ghcr.io/devcontainers-extra/features/ansible:2": {},
     "ghcr.io/devcontainers-contrib/features/neovim-homebrew:1": {},
+    "ghcr.io/hspaans/devcontainer-features/sshpass:1": {},
     "ghcr.io/jsburckhardt/devcontainer-features/gitleaks:1": {},
     "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
     "ghcr.io/christophermacgown/devcontainer-features/direnv:1": {},
     "ghcr.io/mpriscella/features/sops:1": {},
-    "ghcr.io/devcontainers/extra/features/age:1": {},
-    "ghcr.io/devcontainers/extra/features/kubectx-kubens:1": {},
     "ghcr.io/rio/features/k9s:1": {},
-    "ghcr.io/jsburchkardt/devcontainer-features/flux:1": {},
     "ghcr.io/jpawlowski/devcontainer-features/cascadia-code:1": {},
     "ghcr.io/robbert229/devcontainer-features/opentofu:1": {},
-    "ghcr.io/devcontainers-extra/features/ansible:2": {}
+    "ghcr.io/devcontainers-extra/features/age:1": {},
+    "ghcr.io/devcontainers-extra/features/kubectx-kubens:1": {},
+    "ghcr.io/jsburckhardt/devcontainer-features/flux:1": {},
+    "ghcr.io/prulloac/devcontainer-features/pre-commit:1": {}
   },
   "postCreateCommand": "sudo apt-get update && sudo apt-get install -y iputils-ping netcat-openbsd",
   "postStartCommand": "git config --global --add safe.directory ${containerWorkspaceFolder}",
   "customizations": {
     "vscode": {
-      "extensions": ["esbenp.prettier-vscode"],
+      "extensions": [
+        "esbenp.prettier-vscode"
+      ],
       "settings": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode"
