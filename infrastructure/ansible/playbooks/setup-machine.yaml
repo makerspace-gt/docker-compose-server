@@ -1,4 +1,6 @@
 - name: Configure machines
+  vars:
+    rke2_version: v1.33.1+rke2r1
   hosts: all
   become: true
 
@@ -17,4 +19,4 @@
 
     - name: Install Kubernetes CLI
       ansible.builtin.shell:
-        cmd: sudo apt-get install -y kubectl
+        cmd: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
