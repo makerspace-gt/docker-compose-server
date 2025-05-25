@@ -4,4 +4,3 @@ resources:
   - namespace.yaml
   - configmap.yaml
   - cronjob.yaml
-  - renovate-container-env-secret.yaml
