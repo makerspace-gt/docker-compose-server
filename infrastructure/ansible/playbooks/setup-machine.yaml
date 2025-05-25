@@ -1,4 +1,21 @@
-- name: Configure machines
+- name: Check single host requirement
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Fail if multiple hosts detected
+      fail:
+        msg: |
+          This playbook is designed for single-host RKE2 deployment only.
+          Found {{ groups['all'] | length }} hosts: {{ groups['all'] | join(', ') }}
+          Please ensure your inventory contains exactly one host.
+      when: groups['all'] | length != 1
+
+    - name: Fail if no cluster is provided
+      fail:
+        msg: "You must pass a cluster variable (e.g. -e 'cluster=staging')"
+      when: cluster is not defined
+
+- name: Configure single RKE2 server
   vars:
     rke2_version: v1.33.1+rke2r1
   hosts: all
@@ -11,6 +28,33 @@
       args:
         creates: /usr/local/bin/rke2
 
+    - name: Create RKE2 config directory
+      file:
+        path: /etc/rancher/rke2
+        state: directory
+
+    - name: Configure RKE2 server
+      copy:
+        content: |
+          write-kubeconfig-mode: "0644"
+          tls-san:
+            - {{ ansible_default_ipv4.address }}
+            - {{ inventory_hostname }}
+        dest: /etc/rancher/rke2/config.yaml
+
+    - name: Start and enable RKE2 server
+      systemd:
+        name: rke2-server
+        state: started
+        enabled: yes
+
+    - name: Wait for RKE2 server to be ready
+      wait_for:
+        port: 6443
+        host: "{{ ansible_default_ipv4.address }}"
+        delay: 30
+        timeout: 300
+
     - name: Install Flux CLI
       shell: |
         curl -s https://fluxcd.io/install.sh | bash
@@ -18,5 +62,58 @@
         executable: /bin/bash
 
     - name: Install Kubernetes CLI
-      ansible.builtin.shell:
-        cmd: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      shell: |
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        chmod +x kubectl
+        mv kubectl /usr/local/bin/
+
+    # Kubeconfig management
+    - name: Copy kubeconfig to temp location with proper permissions
+      copy:
+        src: /etc/rancher/rke2/rke2.yaml
+        dest: /tmp/rke2-kubeconfig.yaml
+        owner: "{{ ansible_user }}"
+        mode: '0644'
+        remote_src: yes
+
+    - name: Fetch kubeconfig from server
+      fetch:
+        src: /tmp/rke2-kubeconfig.yaml
+        dest: ../../../kubeconfigs/kubeconfig-{{ cluster }}
+        flat: yes
+
+    - name: Clean up temp kubeconfig
+      file:
+        path: /tmp/rke2-kubeconfig.yaml
+        state: absent
+
+    - name: Update kubeconfig server address
+      replace:
+        path: ../../../kubeconfigs/kubeconfig-{{ cluster }}
+        regexp: 'https://127.0.0.1:6443'
+        replace: 'https://{{ ansible_default_ipv4.address }}:6443'
+      delegate_to: localhost
+
+    - name: Set kubeconfig permissions
+      file:
+        path: ../../../kubeconfigs/kubeconfig-{{ cluster }}
+        mode: '0600'
+      delegate_to: localhost
+
+    - name: Test cluster connectivity
+      shell: |
+        export KUBECONFIG=../../../kubeconfigs/kubeconfig-{{ cluster }}
+        kubectl cluster-info
+      delegate_to: localhost
+      register: cluster_info
+
+    - name: Show setup completion
+      debug:
+        msg: |
+          RKE2 single-node cluster setup complete!
+          Kubeconfig saved to: ../../../kubeconfigs/kubeconfig-{{ cluster }}
+          
+          To use it:
+          export KUBECONFIG=../../../kubeconfigs/kubeconfig-{{ cluster }}
+          
+          Next step: Run flux bootstrap

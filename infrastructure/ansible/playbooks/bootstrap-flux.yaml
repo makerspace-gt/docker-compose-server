@@ -1,17 +1,43 @@
-- name: Check valid cluster input
+- name: Check single host requirement
   hosts: localhost
   gather_facts: false
   tasks:
+    - name: Fail if multiple hosts detected
+      fail:
+        msg: |
+          This playbook is designed for single-host RKE2 deployment only.
+          Found {{ groups['all'] | length }} hosts: {{ groups['all'] | join(', ') }}
+          Please ensure your inventory contains exactly one host.
+      when: groups['all'] | length != 1
+
     - name: Fail if no cluster is provided
       fail:
         msg: "You must pass a cluster variable (e.g. -e 'cluster=staging')"
       when: cluster is not defined
 
+    - name: Check for KUBECONFIG
+      fail:
+        msg: "KUBECONFIG environment variable must be set"
+      when: lookup('env', 'KUBECONFIG') == ""
+
+    - name: Check for GitHub token
+      fail:
+        msg: "GITHUB_TOKEN environment variable must be set"
+      when: lookup('env', 'GITHUB_TOKEN') == ""
+
 - name: Bootstrap Flux for {{ cluster }}
-  hosts: all
-  gather_facts: true
-  become: true
+  hosts: localhost
+  gather_facts: false
   tasks:
+    - name: Test kubectl connection
+      shell: kubectl cluster-info
+      environment:
+        KUBECONFIG: "{{ lookup('ansible.builtin.env', 'KUBECONFIG') }}"
+      register: kubectl_test
+    - name: Show kubectl test result
+      ansible.builtin.debug:
+        var: kubectl_test.stdout
+
     - name: Run flux bootstrap for {{ cluster }}
       shell: |
         flux bootstrap github \
@@ -20,4 +46,6 @@
           --branch=feature/kubernetes \
           --path=clusters/{{ cluster }} \
           --personal
-      when: cluster is defined
+      environment:
+        GITHUB_TOKEN: "{{ lookup('ansible.builtin.env', 'GITHUB_TOKEN') }}"
+        KUBECONFIG: "{{ lookup('ansible.builtin.env', 'KUBECONFIG') }}"
