@@ -4,6 +4,10 @@ all:
       hosts:
         makerspace-staging:
           ansible_host: staging.makerspace-gt.de
+    production:
+      hosts:
+        makerspace-production:
+          ansible_host: production.makerspace-gt.de
     uptime:
       hosts:
         makerspace-uptime:
