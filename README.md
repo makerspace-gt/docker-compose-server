@@ -8,6 +8,12 @@
 - Anpassen - Renovate-secrets & Repo-URL - und werden separate PRs für die Cluster erstellt? Muss es in allen Clustern laufen (no?)? 
 - Monitoring see https://www.reddit.com/r/selfhosted/comments/1d1xu6z/is_there_some_good_uptime_monitor_tool_that_can/
   - Uptimekuma oder Gatus?
+- Todo Dienste:
+  - OpenCloud
+  - Crowdsec
+  - Vaultwarden
+  - Vikunja
+  - Zammad
 
 > # TODO WENN VERSCHOBEN IN ORG REPO
 
