@@ -79,7 +79,7 @@
     - name: Fetch kubeconfig from server
       fetch:
         src: /tmp/rke2-kubeconfig.yaml
-        dest: ../../../kubeconfigs/kubeconfig-{{ cluster }}
+        dest: ../../kubeconfigs/kubeconfig-{{ cluster }}
         flat: yes
 
     - name: Clean up temp kubeconfig
@@ -89,20 +89,20 @@
 
     - name: Update kubeconfig server address
       replace:
-        path: ../../../kubeconfigs/kubeconfig-{{ cluster }}
+        path: ../../kubeconfigs/kubeconfig-{{ cluster }}
         regexp: 'https://127.0.0.1:6443'
         replace: 'https://{{ ansible_default_ipv4.address }}:6443'
       delegate_to: localhost
 
     - name: Set kubeconfig permissions
       file:
-        path: ../../../kubeconfigs/kubeconfig-{{ cluster }}
+        path: ../../kubeconfigs/kubeconfig-{{ cluster }}
         mode: '0600'
       delegate_to: localhost
 
     - name: Test cluster connectivity
       shell: |
-        export KUBECONFIG=../../../kubeconfigs/kubeconfig-{{ cluster }}
+        export KUBECONFIG=../../kubeconfigs/kubeconfig-{{ cluster }}
         kubectl cluster-info
       delegate_to: localhost
       register: cluster_info
@@ -111,9 +111,9 @@
       debug:
         msg: |
           RKE2 single-node cluster setup complete!
-          Kubeconfig saved to: ../../../kubeconfigs/kubeconfig-{{ cluster }}
+          Kubeconfig saved to: ../../kubeconfigs/kubeconfig-{{ cluster }}
           
           To use it:
-          export KUBECONFIG=../../../kubeconfigs/kubeconfig-{{ cluster }}
+          export KUBECONFIG=../../kubeconfigs/kubeconfig-{{ cluster }}
           
           Next step: Run flux bootstrap
