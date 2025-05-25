@@ -25,21 +25,3 @@ spec:
       - paths: ["/metadata/annotations/prometheus-operator-validated"]
         target:
           kind: PrometheusRule
-  values:
-    grafana:
-      ingress:
-        enabled: true
-        ingressClassName: traefik
-        hosts:
-          - monitoring.niels-fechtel.com
-        tls:
-          - secretName: grafana-tls-secret
-            hosts:
-              - monitoring.niels-fechtel.com
-  valuesFrom:
-    - kind: Secret
-      name: kube-prometheus-values
-      valuesKey: grafanaAdminPassword
-      targetPath: grafana.adminPassword
-
-
