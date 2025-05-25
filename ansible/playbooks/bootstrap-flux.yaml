@@ -44,7 +44,7 @@
           --owner=nielsfechtel \
           --repository=fork-mkspgt-docker-compose-server \
           --branch=feature/kubernetes \
-          --path=clusters/{{ cluster }} \
+          --path=kubernetes/clusters/{{ cluster }} \
           --personal
       environment:
         GITHUB_TOKEN: "{{ lookup('ansible.builtin.env', 'GITHUB_TOKEN') }}"
