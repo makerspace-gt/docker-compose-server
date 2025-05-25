@@ -20,9 +20,8 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: wikijs-repo
-        version: 1.7.0
         interval: 1m0s
-  vales:
+  values:
     image.tag: v2.5.307
     # "You must deploy a single instance in order to setup the application. Once setup is completed, you can increase the number of replicas to any amount."
     # "Even though Wiki.js supports other database engines, using PostgreSQL is a requirement for multiple replicas."
