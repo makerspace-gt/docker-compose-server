@@ -1,0 +1,33 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: wikijs-repo
+  namespace: wiki
+spec:
+  interval: 1m0s
+  url: https://charts.js.wiki
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: wikijs-release
+  namespace: wiki
+spec:
+  chart:
+    spec:
+      chart: requarks/wiki
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: wikijs-repo
+        version: 1.7.0
+        interval: 1m0s
+  vales:
+    image.tag: v2.5.307
+    # "You must deploy a single instance in order to setup the application. Once setup is completed, you can increase the number of replicas to any amount."
+    # "Even though Wiki.js supports other database engines, using PostgreSQL is a requirement for multiple replicas."
+    replicacount: 1
+    postgresql.enabled: true
+    ingress: true
+    ingress.hosts: [{"host": "wiki.local", "paths": ["/"]}]
+
