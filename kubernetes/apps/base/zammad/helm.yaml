@@ -1,0 +1,24 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: zammad-repo
+  namespace: zammad
+spec:
+  interval: 1m0s
+  url: https://zammad.github.io/zammad-helm
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: zammad-release
+  namespace: zammad
+spec:
+  chart:
+    spec:
+      chart: zammad/zammad
+      reconcileStrategy: ChartVersion
+      interval: 1m0s
+      sourceRef:
+        kind: HelmRepository
+        name: zammad-repo
+  values:

@@ -1,0 +1,25 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: vaultwarden-repo
+  namespace: vaultwarden
+spec:
+  interval: 1m0s
+  url: https://guerzon.github.io/vaultwarden
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: vaultwarden-release
+  namespace: vaultwarden
+spec:
+  chart:
+    spec:
+      chart: vaultwarden/vaultwarden
+      reconcileStrategy: ChartVersion
+      interval: 1m0s
+      sourceRef:
+        kind: HelmRepository
+        name: vaultwarden-repo
+  values:
+    image.tag: 1.33.2

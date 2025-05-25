@@ -17,10 +17,10 @@ spec:
     spec:
       chart: requarks/wiki
       reconcileStrategy: ChartVersion
+      interval: 1m0s
       sourceRef:
         kind: HelmRepository
         name: wikijs-repo
-        interval: 1m0s
   values:
     image.tag: v2.5.307
     # "You must deploy a single instance in order to setup the application. Once setup is completed, you can increase the number of replicas to any amount."
