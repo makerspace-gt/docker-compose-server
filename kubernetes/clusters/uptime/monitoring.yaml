@@ -10,7 +10,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./kubernetes/monitoring/controllers/uptime
+  path: ./kubernetes/monitoring/controllers/uptime/
   prune: true
   decryption:
     provider: sops
@@ -29,7 +29,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./kubernetes/monitoring/configs/uptime
+  path: ./kubernetes/monitoring/configs/uptime/
   prune: true
   decryption:
     provider: sops
