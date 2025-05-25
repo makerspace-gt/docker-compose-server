@@ -1,8 +1,13 @@
+
+
 > # TODO WENN VERSCHOBEN IN ORG REPO
 
 - Template-ID festlegen
 - User für Flux erstellen und dem Repo hinzugefügen, siehe docs von `flux bootstrap github`
 - Secrets anpassen mit neuem age-key-pair in Vaultwarden
+- Anpassen - Renovate-secrets & Repo-URL - und werden separate PRs für die Cluster erstellt? Muss es in allen Clustern laufen (no?)? 
+- Monitoring see https://www.reddit.com/r/selfhosted/comments/1d1xu6z/is_there_some_good_uptime_monitor_tool_that_can/
+  - Uptimekuma oder Gatus?
 
 > # TODO WENN VERSCHOBEN IN ORG REPO
 
@@ -18,7 +23,7 @@ Weitere Infos im Wiki: [IT-Infrastruktur Über­sicht](https://wiki.makerspace-g
 # Workflow
 
 Der Devcontainer mit den benötigten Tools ist bereitgestellt und sollte genutzt werden.
-Mit OpenTofu (in _infrastructure/tofu_) werden die drei Flux-cluster _staging_, _production_ und _uptime_ beim OpenNebula-Provider aufgesetzt.
+Mit OpenTofu (in _./tofu/_) werden die drei Flux-cluster _staging_, _production_ und _uptime_ beim OpenNebula-Provider aufgesetzt.
 Mit Ansible werden die Maschinen konfiguriert (Installation vom Kubernetes-Provider (Rancher RKE2)) und Aufsetzen von Flux.
 
 ## Secret management
@@ -50,7 +55,7 @@ _cloud-init.yaml_ enthält dabei nützliche Standard-Werte und die Logik für di
 
 ## Aufsetzen mit Ansible
 
-In _infrastructure/ansible_:
+In _./ansible/_:
 - Setup der Maschine: `ansible-playbook playbooks/setup-machine.yaml --limit staging -e "cluster=staging"`
   - Dabei wird auf einen Host limitiert, der entsprechende Flux-cluster muss auch definiert werden
   - Das Playbook installiert RKE2 und weitere CLIs und downloaded eine angepasste kubeconfig, benannt nach cluster, z.B. _./kubeconfigs/kubeconfig-staging_
