@@ -1,0 +1,25 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: uptimekuma-repo
+  namespace: uptimekuma
+spec:
+  interval: 1m0s
+  url: https://l3st86.github.io/HelmCharts/
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: uptimekuma-release
+  namespace: uptimekuma
+spec:
+  chart:
+    spec:
+      chart: l3st86/UptimeKuma
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: uptimekuma-repo
+        version: 1.7.0
+        interval: 1m0s
+

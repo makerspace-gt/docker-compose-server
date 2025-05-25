@@ -1,0 +1,24 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: gatus-repo
+  namespace: gatus
+spec:
+  interval: 1m0s
+  url: https://twin.github.io/helm-charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gatus-release
+  namespace: gatus
+spec:
+  chart:
+    spec:
+      chart: twin/gatus
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: HelmRepository
+        name: gatus-repo
+        version: 1.7.0
+        interval: 1m0s
