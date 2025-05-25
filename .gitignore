@@ -12,6 +12,7 @@ env.*
 **/kubeconfig
 **/.kube/config
 *.kubeconfig
+*kubeconfig*
 *.kube
 
 # Terraform-specific ignores, https://github.com/github/gitignore/blob/main/Terraform.gitignore
