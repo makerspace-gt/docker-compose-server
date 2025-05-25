@@ -1,40 +1,57 @@
+> # TODO WENN VERSCHOBEN IN ORG REPO
+
+- Template-ID festlegen
+- User für Flux erstellen und dem Repo hinzugefügen, siehe docs von `flux bootstrap github`
+- Secrets anpassen mit neuem age-key-pair in Vaultwarden
+
+> # TODO WENN VERSCHOBEN IN ORG REPO
+
+
+
+
 # docker-compose-server
+
 Die IT-Infrastruktur des Makerspace Gütersloh.
 Ein Ansible-basiertes Setup, das diverse Dienste mit Docker Compose startet. 
 Weitere Infos im Wiki: [IT-Infrastruktur Über­sicht](https://wiki.makerspace-gt.de/de/IT-Infrastruktur/%C3%9Cbersicht).
 
-# Nutzung
+# Workflow
 
-Ein Devcontainer mit den benötigten Tools ist bereitgestellt.
+Der Devcontainer mit den benötigten Tools ist bereitgestellt und sollte genutzt werden.
+Mit OpenTofu (in _infrastructure/tofu_) werden die drei Flux-cluster _staging_, _production_ und _uptime_ beim OpenNebula-Provider aufgesetzt.
+Mit Ansible werden die Maschinen konfiguriert (Installation vom Kubernetes-Provider (Rancher RKE2)) und Aufsetzen von Flux.
 
-## OpenTofu
+## Secret management
+Ansible nutzt `ansible-vault`, OpenTofu und Kubernetes `sops` mit einem `age`-Key.
+Zum Neu-Verschlüsseln mit sops: `sops --encrypt --in-place <Datei>` - dabei muss ggf. _encrypted-regex_ in _./.sops.yaml_ angepasst werden - dort sind die zu verschlüsselnden Werte angegeben (z.B. "password", "username", ...).
+Die _./.sops.yaml_ enthält auch den public age-Key.
+Der private age-Key muss im lokalen Home-Verzeichnis vorhanden sein, siehe der mount in _devcontainer.json_, oder als Umgebungsvariable.
 
-Mit OpenTofu werden die VM(s) aufgesetzt:
-```
-tofu plan
-tofu apply
+Wie `ansible-vault edit <file>` kann auch sops `sops edit <file>`, um eine Datei in einem Schritt zu
+- entschlüsseln
+- im definierten Editor zum bearbeiten öffnen
+- beim Speichern und Schließen des Editors wieder verschlüsseln
 
-In _tofu/variables.tf_
-```
+## Provisioning mit OpenTofu
 
-IP der neuen VM -> intentory-Datei oder DNS-Eintrag anpassen.
+Wie bei Terraform sind die Schritte `tofu plan/apply/destroy/state list`.
+Limitiert wird mit `-target=opennebula_virtual_machine.<environment>_vm`, z.B. `-target=opennebula_virtual_machine.uptime_vm`.
 
-## Ansible
+- Bei Erst-Installation/Update: `tofu init`
+- Planung: `tofu plan -target=opennebula_virtual_machine.<environment>_vm` 
+- Apply: `tofu apply -target=opennebula_virtual_machine.<environment>_vm`
+- Zerstören: `tofu destroy -target=opennebula_virtual_machine.<environment>_vm`
+- Zustand: `tofu state list`
 
-Mit den drei Ansible-playbooks wird die VM (angegeben mit `-e "cluster=<staging/production/monitoring>"`):
-- _setup-machine.yaml_:
-  - Installiert und Initialisiert RKE2, Kubernetes- & Flux-CLI
-  - kubeconfig-Setup
-  - Download der _kubeconfig_-Datei, benannt je nach cluster
-- _bootstrap-flux.yaml_: Initialisiert Flux für GitOps
+### Variablen/Werte
+_variables.tf_ enthält die Template-ID im OpenNebula-Interface, die für alle Maschinen genutzt wird, sowie die GitHub-Usernames, deren SSH-Keys automatisch den Maschinen hinzugefügt werden.
+_tfsecrets.yaml_ enthält die OpenNebula-Interface-Zugangsdaten.
+_cloud-init.yaml_ enthält dabei nützliche Standard-Werte und die Logik für die SSH-Keys.
 
-# Flux setup bei Org mit Flux-user mit eigenem Personal access token:
-> Siehe https://fluxcd.io/flux/installation/bootstrap/github/
-> 
-> GitHub Organization
-> 
-> If you want to bootstrap Flux for a repository owned by an GitHub organization, it is recommended to create a dedicated user for Flux under your organization.
-> 
-> Generate a GitHub PAT for the Flux user that can create repositories by checking all permissions under repo.
-> 
-> If you want to use an existing repository, the Flux user must have admin permissions for that repository.
+## Aufsetzen mit Ansible
+
+In _infrastructure/ansible_:
+- Setup der Maschine: `ansible-playbook playbooks/setup-machine.yaml --limit staging -e "cluster=staging"`
+  - Dabei wird auf einen Host limitiert, der entsprechende Flux-cluster muss auch definiert werden
+  - Das Playbook installiert RKE2 und weitere CLIs und downloaded eine angepasste kubeconfig, benannt nach cluster, z.B. _./kubeconfigs/kubeconfig-staging_
+- Flux bootstrappen: `ansible-playbook playbooks/bootstrap-flux.yaml --limit staging -e "cluster=staging"`
