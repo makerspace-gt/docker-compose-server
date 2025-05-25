@@ -29,5 +29,6 @@
         "editor.defaultFormatter": "esbenp.prettier-vscode"
       }
     }
-  }
+  },
+  "mounts": [ "source=${localEnv:HOME}/.age,target=/home/vscode/.config/sops/age,type=bind,readonly" ]
 }
