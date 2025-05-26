@@ -1,12 +1,3 @@
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: vikunja-repo
-  namespace: vikunja
-spec:
-  interval: 5m0s
-  url: oci://tccr.io/truecharts/vikunja
----
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -22,5 +13,5 @@ spec:
       interval: 1m0s
       sourceRef:
         kind: HelmRepository
-        name: vikunja-repo
+        name: truecharts
   values:

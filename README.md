@@ -1,6 +1,6 @@
 
 
-> # TODO WENN VERSCHOBEN IN ORG REPO
+> # TODO
 
 - Template-ID festlegen
 - User für Flux erstellen und dem Repo hinzugefügen, siehe docs von `flux bootstrap github`
