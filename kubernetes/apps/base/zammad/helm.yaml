@@ -4,7 +4,7 @@ metadata:
   name: zammad-repo
   namespace: zammad
 spec:
-  interval: 1m0s
+  interval: 5m0s
   url: https://zammad.github.io/zammad-helm
 ---
 apiVersion: helm.toolkit.fluxcd.io/v2
