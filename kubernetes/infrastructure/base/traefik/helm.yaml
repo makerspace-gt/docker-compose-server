@@ -13,6 +13,8 @@ metadata:
   name: traefik-release
   namespace: traefik
 spec:
+  interval: 10m
+  timeout: 5m
   chart:
     spec:
       chart: traefik/traefik
@@ -34,4 +36,3 @@ spec:
   # Allow the Gateway to expose HTTPRoute from all namespaces
   gateway:
     namespacePolicy: All
-

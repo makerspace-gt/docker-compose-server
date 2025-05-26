@@ -13,6 +13,8 @@ metadata:
   name: vikunja-release
   namespace: vikunja
 spec:
+  interval: 10m
+  timeout: 5m
   chart:
     spec:
       chart: truecharts/vikunja

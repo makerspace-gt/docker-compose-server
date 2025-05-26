@@ -13,6 +13,8 @@ metadata:
   name: wikijs-release
   namespace: wiki
 spec:
+  interval: 10m
+  timeout: 5m
   chart:
     spec:
       chart: requarks/wiki
@@ -28,5 +30,4 @@ spec:
     replicacount: 1
     postgresql.enabled: true
     ingress: true
-    ingress.hosts: [{"host": "wiki.local", "paths": ["/"]}]
-
+    ingress.hosts: [{ "host": "wiki.local", "paths": ["/"] }]

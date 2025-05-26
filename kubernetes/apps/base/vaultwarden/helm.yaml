@@ -13,6 +13,8 @@ metadata:
   name: vaultwarden-release
   namespace: vaultwarden
 spec:
+  interval: 10m
+  timeout: 5m
   chart:
     spec:
       chart: vaultwarden/vaultwarden
