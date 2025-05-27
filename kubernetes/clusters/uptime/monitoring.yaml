@@ -12,10 +12,6 @@ spec:
     name: flux-system
   path: ./kubernetes/monitoring/controllers/uptime/
   prune: true
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -31,7 +27,3 @@ spec:
     name: flux-system
   path: ./kubernetes/monitoring/configs/uptime/
   prune: true
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
