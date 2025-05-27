@@ -3,4 +3,4 @@ kind: Kustomization
 namespace: traefik
 resources:
   - ../../base/traefik
-  - traefik-whoami-test.yaml
+#  - traefik-whoami-test.yaml
