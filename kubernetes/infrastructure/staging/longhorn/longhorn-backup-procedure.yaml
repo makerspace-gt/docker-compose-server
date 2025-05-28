@@ -1,12 +1,11 @@
 apiVersion: longhorn.io/v1beta2
 kind: RecurringJob
 metadata:
-  name: longhorn-recurring-backup-job
+  name: demo
   namespace: longhorn-system
 spec:
   task: system-backup
-  # At minute 0 every hour
-  cron: '0 * * * *'
-  retain: 3
+  cron: '* * * * *'
+  retain: 1
   parameters:
     volume-backup-policy: if-not-present

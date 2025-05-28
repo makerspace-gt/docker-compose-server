@@ -4,5 +4,5 @@ namespace: longhorn-system
 resources:
   - ../../base/longhorn
   - longhorn-backup-anback-minio-secret.yaml
-  - longhorn-backup-procedure.yaml
   - longhorn-default-resource-configmap.yaml
+  - longhorn-backup-procedure.yaml
