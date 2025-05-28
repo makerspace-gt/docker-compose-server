@@ -14,13 +14,11 @@ metadata:
   namespace: longhorn-system
 spec:
   interval: 10m
-  timeout: 5m
   chart:
     spec:
       chart: longhorn
       reconcileStrategy: ChartVersion
+      version: v1.9.0
       sourceRef:
         kind: HelmRepository
         name: longhorn-repo
-        version: v1.9.0
-        interval: 1m0s
