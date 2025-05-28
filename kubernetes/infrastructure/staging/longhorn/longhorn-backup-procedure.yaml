@@ -1,10 +1,12 @@
 apiVersion: longhorn.io/v1beta2
-kind: Backup
+kind: RecurringJob
 metadata:
-  name: backup
+  name: longhorn-recurring-backup-job
   namespace: longhorn-system
 spec:
-  backupMode: full
-  snapshotName: snapshot-name-example
-  labels:
-    app: test-app-label
+  task: system-backup
+  # At minute 0 every hour
+  cron: '0 * * * *'
+  retain: 3
+  parameters:
+    volume-backup-policy: if-not-present
