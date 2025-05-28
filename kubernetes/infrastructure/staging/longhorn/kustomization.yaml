@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: longhorn-system
 resources:
   - ../../base/longhorn
+#  - traefik-whoami-test.yaml
   #- longhorn-backup-anback-minio-secret.yaml
   #- longhorn-default-resource-configmap.yaml
   #- longhorn-backup-procedure.yaml
