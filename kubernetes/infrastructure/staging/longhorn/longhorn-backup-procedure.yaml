@@ -1,11 +1,17 @@
-apiVersion: longhorn.io/v1beta2
+apiVersion: longhorn.io/v1beta1
 kind: RecurringJob
 metadata:
-  name: demo
+  name: snapshot-1
   namespace: longhorn-system
 spec:
-  task: system-backup
-  cron: '* * * * *'
-  retain: 1
-  parameters:
-    volume-backup-policy: if-not-present
+  cron: "0 * * * *"
+  # https://longhorn.io/docs/1.9.0/snapshots-and-backups/scheduling-backups-and-snapshots/
+  # "backup: periodically create snapshots then
+  # do backups after cleaning up outdated snapshots"
+  task: "backup"
+  groups:
+  - default
+  - group1
+  retain: 3
+  concurrency: 2
+  full-backup-interval: 10
