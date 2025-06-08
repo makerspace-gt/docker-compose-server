@@ -72,4 +72,6 @@
       vars:
         SERVICES_ENVIRONMENT_DOMAIN: "uptime-kuma.makerspace-gt.de"
 
+    - role: roles/signal-cli-rest-api
+
     # - role: roles/resticker-stack
