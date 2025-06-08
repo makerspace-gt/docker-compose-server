@@ -1,0 +1,36 @@
+---
+services:
+  signal-cli-rest-api:
+    container_name: signal-cli-rest-api
+    image: bbernhard/signal-cli-rest-api:latest
+    restart: unless-stopped
+    volumes:
+      - data:/home/.local/share/signal-cli
+    environment:
+      MODE: json-rpc #supported modes: json-rpc, native, normal
+      #- AUTO_RECEIVE_SCHEDULE=0 22 * * * #enable this parameter on demand (see description below)
+    labels:
+      traefik.docker.network: proxy
+      traefik.enable: "true"
+      traefik.http.routers.signal-cli-rest-api-secure.entrypoints: websecure
+      traefik.http.routers.signal-cli-rest-api-secure.middlewares: "signal-cli-rest-api-auth"
+      traefik.http.middlewares.signal-cli-rest-api-auth.basicauth.users: "spacy:$$2a$$12$$DJsobBScKA07cKMqnbT63udoRv/VdNO3.rz.SIIDYQRNe.hpTGT/W"
+      traefik.http.routers.signal-cli-rest-api-secure.rule: Host(${SERVICES_LABELS_TRAEFIK_HOST})
+      traefik.http.routers.signal-cli-rest-api-secure.service: signal-cli-rest-api
+      traefik.http.routers.signal-cli-rest-api-secure.tls: "true"
+      traefik.http.routers.signal-cli-rest-api-secure.tls.certresolver: http_resolver
+      traefik.http.routers.signal-cli-rest-api.entrypoints: web
+      traefik.http.routers.signal-cli-rest-api.rule: Host(${SERVICES_LABELS_TRAEFIK_HOST})
+      traefik.http.services.signal-cli-rest-api.loadbalancer.server.port: "8080"
+    networks:
+      default: null
+      proxy: null
+
+networks:
+  default:
+  proxy:
+    external: true
+
+volumes:
+  data:
+    driver: local
