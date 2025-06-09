@@ -1,0 +1,35 @@
+---
+
+services:
+  backup:
+    environment:
+      PRE_COMMANDS: |-
+            docker exec zammad-railsserver /docker-entrypoint.sh rails r 'Channel.where(area: "Email::Account").update_all(active: false)'
+            docker exec zammad-postgresql pg_dump --file=/var/tmp/zammad/zammad_production.pg_dump --dbname=zammad_production --username=zammad
+            docker exec zammad-railsserver /docker-entrypoint.sh rails r 'Channel.where(area: "Email::Account").update_all(active: true)'
+            docker exec nextcloud-postgres pg_dump --file=/mnt/nextcloud-data/nextcloud.pg_dump --dbname=nextcloud --username=nextcloud
+            docker exec wikijs-postgres pg_dump --file=/var/tmp/wikijs.pg_dump --dbname=wikijs --username=wikijs
+            docker exec vikunja-postgres pg_dump --file=/var/tmp/vikunja.pg_dump --dbname=vikunja --username=vikunja
+    volumes:
+      - zammad-backup:/mnt/volumes/zammad
+      - vaultwarden-data:/mnt/volumes/vaultwarden
+      - nextcloud-data:/mnt/volumes/nextcloud
+      - wikijs-backup:/mnt/volumes/wikijs
+      - vikunja-data:/mnt/volumes/vikunja
+
+volumes:
+  zammad-backup:
+    name: zammad-backup
+    external: true
+  vaultwarden-data:
+    name: vaultwarden-data
+    external: true
+  nextcloud-data:
+    name: nextcloud-stack_nextcloud-data
+    external: true
+  wikijs-backup:
+    name: wikijs-stack_backup
+    external: true
+  vikunja-data:
+    name: vikunja-stack_data
+    external: true

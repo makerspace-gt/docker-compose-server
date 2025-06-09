@@ -74,4 +74,6 @@
 
     - role: roles/signal-cli-rest-api
 
-    # - role: roles/resticker-stack
+    - role: roles/resticker-stack
+      vars:
+        OVERRIDE: "compose.koorax.yaml"
