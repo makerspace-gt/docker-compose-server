@@ -8,6 +8,13 @@
     mode: '644'
     force: true
 
+- name: link override file
+  ansible.builtin.file:
+    src: "/opt/containers/resticker-stack/{{ OVERRIDE }}"
+    dest: /opt/containers/resticker-stack/compose.override.yaml
+    state: link
+  when: OVERRIDE is defined
+
 - name: copy .env.j2
   ansible.builtin.template:
     src: templates/.env.j2
