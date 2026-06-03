@@ -13,6 +13,9 @@ forum.makerspace-gt.de
 [octoprint]
 192.168.1.254 ansible_user=maker ansible_password=maker ansible_become=true
 
+[spof]
+spof.makerspace-gt.de
+
 [unstable]
 unstable.makerspace-gt.de
 
