@@ -1,27 +1,21 @@
 ---
-# tasks file for resticker-stack
+# tasks file for resticker
 
-- name: copy docker compose stack
+- name: copy docker compose
   ansible.builtin.copy:
-    src: defaults/resticker-stack
+    src: defaults/resticker
     dest: /opt/containers
     mode: '644'
     force: true
 
-- name: link override file
-  ansible.builtin.file:
-    src: "/opt/containers/resticker-stack/{{ OVERRIDE }}"
-    dest: /opt/containers/resticker-stack/compose.override.yaml
-    state: link
-  when: OVERRIDE is defined
-
 - name: copy .env.j2
   ansible.builtin.template:
     src: templates/.env.j2
-    dest: /opt/containers/resticker-stack/.env
+    dest: /opt/containers/resticker/.env
     mode: '644'
 
-- name: start docker compose stack
+- name: start docker compose
   community.docker.docker_compose_v2:
-    project_src: /opt/containers/resticker-stack
+    project_src: /opt/containers/resticker
     state: present
+    remove_orphans: true
