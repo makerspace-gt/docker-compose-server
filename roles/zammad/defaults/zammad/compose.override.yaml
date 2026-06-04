@@ -43,6 +43,12 @@ services:
           memory: "${ZAMMAD_BACKUP_RESOURCES_LIMITS_MEMORY:-500m}"
   zammad-elasticsearch:
     container_name: zammad-elasticsearch
+    image: zammad-elasticsearch:${ELASTICSEARCH_VERSION:-7.17.28}
+    build:
+      context: .
+      dockerfile: Dockerfile.elasticsearch
+      args:
+        ELASTICSEARCH_VERSION: ${ELASTICSEARCH_VERSION:-7.17.28}
     deploy:
       resources:
         limits:
