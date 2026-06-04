@@ -56,3 +56,9 @@
     - role: nickjj.docker
 
     - role: roles/watchtower
+
+    - role: roles/traefik-crowdsec-stack
+      vars:
+        SERVICES_TRAEFIK_IMAGE_VERSION: latest
+        SERVICES_TRAEFIK_LABELS_TRAEFIK_HOST: "`traefik.{{ ansible_host }}`"
+        SERVICES_TRAEFIK_CERTIFICATESRESOLVERS_EMAIL: cyber@makerspace-gt.de
