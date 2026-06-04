@@ -24,6 +24,16 @@
     # reload: true
     # ignoreerrors: false
 
+- name: Setting vm.overcommit_memory for Redis
+  ansible.posix.sysctl:
+    name: vm.overcommit_memory
+    value: '1'
+    # state: present
+    sysctl_set: yes
+    # sysctl_file: "/etc/sysctl.conf"
+    # reload: true
+    # ignoreerrors: false
+
 - name: start docker compose
   community.docker.docker_compose_v2:
     project_src: /opt/containers/zammad
