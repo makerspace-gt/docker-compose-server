@@ -1,62 +1,39 @@
 ---
-
-services:
-  backup:
-    container_name: resticker
+x-shared:
+  resticker-service: &resticker-service
     image: mazzolino/restic
     hostname: ${HOSTNAME}
     restart: unless-stopped
+    volumes:
+      - ./rclone.conf:/run/secrets/rclone.conf:ro
+    env_file:
+      - .env
+
+services:
+  backup:
+    <<: *resticker-service
     environment:
-      RUN_ON_STARTUP: "true"
-      BACKUP_CRON: "0 30 3 * * *"
-      # RESTIC_REPOSITORY: /mnt/restic
-      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
-      RESTIC_BACKUP_SOURCES: /mnt/volumes
+      BACKUP_CRON: "0 */30 * * * *"
+      SKIP_INIT: "false"
       RESTIC_BACKUP_ARGS: >-
-        --tag docker-volumes
+        --tag containers,volumes
       RESTIC_FORGET_ARGS: >-
         --keep-last 10
         --keep-daily 7
         --keep-weekly 5
         --keep-monthly 12
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - restic-backup:/mnt/restic
-
+      - ./rclone.conf:/run/secrets/rclone.conf:ro
+      - /opt/containers:/data/containers
+      - /var/lib/docker/volumes:/data/volumes
   prune:
-    container_name: resticker-prune
-    image: mazzolino/restic
-    hostname: ${HOSTNAME}
-    restart: unless-stopped
+    <<: *resticker-service
     environment:
-      SKIP_INIT: "true"
-      RUN_ON_STARTUP: "true"
       PRUNE_CRON: "0 0 4 * * *"
-      # RESTIC_REPOSITORY: /mnt/restic
-      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
-    volumes:
-      - restic-backup:/mnt/restic
-
   check:
-    container_name: resticker-check
-    image: mazzolino/restic
-    hostname: ${HOSTNAME}
-    restart: unless-stopped
+    <<: *resticker-service
     environment:
-      SKIP_INIT: "true"
       RUN_ON_STARTUP: "false"
       CHECK_CRON: "0 15 5 * * *"
       RESTIC_CHECK_ARGS: >-
         --read-data-subset=10%
-      # RESTIC_REPOSITORY: /mnt/restic
-      RESTIC_PASSWORD: ${RESTIC_PASSWORD}
-    volumes:
-      - restic-backup:/mnt/restic
-
-volumes:
-  restic-backup:
-    driver: local
-    driver_opts:
-      type: cifs
-      o: "username=${CIFS_HETZNER_NEXTCLOUD_DATA_USERNAME},password=${CIFS_HETZNER_NEXTCLOUD_DATA_PASSWORD},uid=33,gid=33,dir_mode=0770,file_mode=0770"
-      device: "${CIFS_HETZNER_NEXTCLOUD_DATA_DEVICE}"
