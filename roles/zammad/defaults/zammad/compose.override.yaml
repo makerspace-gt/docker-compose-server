@@ -2,6 +2,8 @@
 
 services:
   zammad-backup:
+    profiles:
+      - do-not-start
     deploy:
       resources:
         limits:
