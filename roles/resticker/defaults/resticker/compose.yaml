@@ -13,7 +13,7 @@ services:
   backup:
     <<: *resticker-service
     environment:
-      BACKUP_CRON: "0 */30 * * * *"
+      BACKUP_CRON: "0 */30 0-2,6-23 * * *"
       SKIP_INIT: "false"
       RESTIC_BACKUP_ARGS: >-
         --tag containers,volumes
