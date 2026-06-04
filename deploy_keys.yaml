@@ -1,0 +1,22 @@
+---
+- name: deploy it infrastructure servers
+  hosts: all
+  remote_user: root
+
+  tasks:
+
+    - name: import ssh keys for root
+      # https://stackoverflow.com/a/48882051
+      ansible.posix.authorized_key:
+        user: root
+        key: https://github.com/{{ item }}.keys
+        comment: '{{ item }}'
+      ignore_errors: yes
+      with_items:
+        - igami         # Michael
+        # - leon2225      # Leon
+        - mattn81       # Martin
+        - mneuhaus      # Marc
+        # - stikkx        # Markus
+        - ReneHezser    # René H.
+        - nielsfechtel  # Niels
