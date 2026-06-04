@@ -57,6 +57,8 @@ services:
           cpus: "${ZAMMAD_POSTGRESQL_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_POSTGRESQL_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-railsserver:
+    volumes:
+      - ./app/models/ticket.rb:/opt/zammad/app/models/ticket.rb
     deploy:
       resources:
         limits:
@@ -69,6 +71,8 @@ services:
           cpus: "${ZAMMAD_REDIS_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_REDIS_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-scheduler:
+    volumes:
+      - ./app/models/ticket.rb:/opt/zammad/app/models/ticket.rb
     deploy:
       resources:
         limits:
