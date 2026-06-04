@@ -12,6 +12,7 @@ x-shared:
 services:
   backup:
     <<: *resticker-service
+    container_name: resticker-backup
     environment:
       BACKUP_CRON: "0 */30 0-2,6-23 * * *"
       SKIP_INIT: "false"
@@ -28,10 +29,12 @@ services:
       - /var/lib/docker/volumes:/data/volumes
   prune:
     <<: *resticker-service
+    container_name: resticker-prune
     environment:
       PRUNE_CRON: "0 0 4 * * *"
   check:
     <<: *resticker-service
+    container_name: resticker-check
     environment:
       RUN_ON_STARTUP: "false"
       CHECK_CRON: "0 15 5 * * *"

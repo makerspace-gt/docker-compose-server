@@ -3,6 +3,7 @@
 services:
   zammad-resticker:
     image: mazzolino/restic
+    container_name: zammad-resticker
     hostname: ${HOSTNAME}
     restart: unless-stopped
     environment:
@@ -32,6 +33,7 @@ services:
       zammad-postgresql:
         condition: service_healthy
   zammad-backup:
+    container_name: zammad-backup
     profiles:
       - do-not-start
     deploy:
@@ -40,24 +42,28 @@ services:
           cpus: "${ZAMMAD_BACKUP_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_BACKUP_RESOURCES_LIMITS_MEMORY:-500m}"
   zammad-elasticsearch:
+    container_name: zammad-elasticsearch
     deploy:
       resources:
         limits:
           cpus: "${ZAMMAD_ELASTICSEARCH_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_ELASTICSEARCH_RESOURCES_LIMITS_MEMORY:-1G}"
   zammad-init:
+    container_name: zammad-init
     deploy:
       resources:
         limits:
           cpus: "${ZAMMAD_INIT_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_INIT_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-memcached:
+    container_name: zammad-memcached
     deploy:
       resources:
         limits:
           cpus: "${ZAMMAD_MEMCACHED_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_MEMCACHED_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-nginx:
+    container_name: zammad-nginx
     ports: !reset []
     labels:
       traefik.docker.network: proxy
@@ -97,12 +103,14 @@ services:
           cpus: "${ZAMMAD_RAILSSERVER_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_RAILSSERVER_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-redis:
+    container_name: zammad-redis
     deploy:
       resources:
         limits:
           cpus: "${ZAMMAD_REDIS_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_REDIS_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-scheduler:
+    container_name: zammad-scheduler
     volumes:
       - ./app/models/ticket.rb:/opt/zammad/app/models/ticket.rb
     deploy:
@@ -111,6 +119,7 @@ services:
           cpus: "${ZAMMAD_SCHEDULER_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_SCHEDULER_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-websocket:
+    container_name: zammad-websocket
     deploy:
       resources:
         limits:

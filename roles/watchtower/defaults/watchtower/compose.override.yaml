@@ -1,6 +1,7 @@
 ---
 services:
   watchtower:
+    container_name: watchtower
     environment:
       TZ: Europe/Berlin
       WATCHTOWER_SCHEDULE: 0 0 4 * * 2 # check tuesdays at 04:00 o'clock
