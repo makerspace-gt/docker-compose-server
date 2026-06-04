@@ -28,6 +28,22 @@ services:
           cpus: "${ZAMMAD_MEMCACHED_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_MEMCACHED_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-nginx:
+    ports: !reset []
+    labels:
+      traefik.docker.network: proxy
+      traefik.enable: "true"
+      traefik.http.routers.zammad-secure.entrypoints: websecure
+      traefik.http.routers.zammad-secure.middlewares: default@file
+      traefik.http.routers.zammad-secure.rule: Host(`${ZAMMAD_FQDN}`)
+      traefik.http.routers.zammad-secure.service: zammad
+      traefik.http.routers.zammad-secure.tls: "true"
+      traefik.http.routers.zammad-secure.tls.certresolver: http_resolver
+      traefik.http.routers.zammad.entrypoints: web
+      traefik.http.routers.zammad.rule: Host(`${ZAMMAD_FQDN}`)
+      traefik.http.services.zammad.loadbalancer.server.port: "8080"
+    networks:
+      default: null
+      proxy: null
     deploy:
       resources:
         limits:
@@ -63,3 +79,8 @@ services:
         limits:
           cpus: "${ZAMMAD_WEBSOCKET_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_WEBSOCKET_RESOURCES_LIMITS_MEMORY:-500M}"
+
+networks:
+  default:
+  proxy:
+    external: true

@@ -1,10 +1,4 @@
 ---
-# defaults file for zammad-stack
+# defaults file for zammad
 
-ELASTICSEARCH_VERSION: latest
-MEMCACHE_VERSION: latest
-POSTGRES_IMAGE: pgautoupgrade/pgautoupgrade
-POSTGRES_VERSION: latest
-REDIS_VERSION: latest
-VERSION: latest
-SERVICES_ZAMMAD_LABELS_TRAEFIK_HOST: "`zammad.{{ ansible_host }}`"
+SERVICES_ZAMMAD_LABELS_TRAEFIK_HOST: "zammad.{{ ansible_host }}"
