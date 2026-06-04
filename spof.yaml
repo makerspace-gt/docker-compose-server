@@ -1,0 +1,8 @@
+---
+- name: deploy it infrastructure servers
+  hosts: spof
+  remote_user: root
+
+  roles:
+
+    - role: roles/zammad
