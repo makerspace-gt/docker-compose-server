@@ -95,6 +95,8 @@ services:
           memory: "${ZAMMAD_POSTGRESQL_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-railsserver:
     container_name: zammad-railsserver
+    environment:
+      RAILS_TRUSTED_PROXIES: ${RAILS_TRUSTED_PROXIES:-nginx-proxy-manager}
     volumes:
       - ./app/models/ticket.rb:/opt/zammad/app/models/ticket.rb
     deploy:
