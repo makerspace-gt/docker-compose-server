@@ -55,6 +55,8 @@
 
     - role: nickjj.docker
 
+    - role: roles/resticker
+
     - role: roles/watchtower
 
     - role: roles/traefik-crowdsec-stack
