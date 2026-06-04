@@ -6,3 +6,5 @@
   roles:
 
     - role: roles/zammad
+      vars:
+        SERVICES_ZAMMAD_LABELS_TRAEFIK_HOST: helpdesk.makerspace-gt.de
