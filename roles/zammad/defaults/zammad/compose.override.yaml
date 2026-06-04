@@ -1,6 +1,36 @@
 ---
 
 services:
+  zammad-resticker:
+    image: mazzolino/restic
+    hostname: ${HOSTNAME}
+    restart: unless-stopped
+    environment:
+      BACKUP_CRON: "0 */30 0-2,6-23 * * *"
+      RESTIC_BACKUP_SOURCES: /data/zammad-postgresql-data/zammad_production.pg_dump
+      RESTIC_BACKUP_ARGS: >-
+        --tag zammad
+      RESTIC_FORGET_ARGS: >-
+        --keep-last 10
+        --keep-daily 7
+        --keep-weekly 5
+        --keep-monthly 12
+      PRE_COMMANDS: |-
+            docker exec zammad-railsserver bundle exec rails r 'Channel.where(area: "Email::Account").update_all(active: false)'
+            docker exec zammad-postgresql pg_dump --file=/var/lib/postgresql/data/zammad_production.pg_dump --dbname=zammad_production --username=zammad
+            docker exec zammad-railsserver bundle exec rails r 'Channel.where(area: "Email::Account").update_all(active: true)'
+    env_file:
+      - /opt/containers/resticker/.env
+      - .env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/containers/resticker/rclone.conf:/run/secrets/rclone.conf:ro
+      - postgresql-data:/data/zammad-postgresql-data
+    depends_on:
+      zammad-railsserver:
+        condition: service_healthy
+      zammad-postgresql:
+        condition: service_healthy
   zammad-backup:
     profiles:
       - do-not-start
@@ -50,6 +80,7 @@ services:
           cpus: "${ZAMMAD_NGINX_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_NGINX_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-postgresql:
+    container_name: zammad-postgresql
     image: pgautoupgrade/pgautoupgrade:${POSTGRES_VERSION:-17.10-alpine}
     deploy:
       resources:
@@ -57,6 +88,7 @@ services:
           cpus: "${ZAMMAD_POSTGRESQL_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_POSTGRESQL_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-railsserver:
+    container_name: zammad-railsserver
     volumes:
       - ./app/models/ticket.rb:/opt/zammad/app/models/ticket.rb
     deploy:
