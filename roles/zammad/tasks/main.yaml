@@ -1,13 +1,9 @@
 ---
-# tasks file for zammad-stack
+# tasks file for zammad
 
-- name: Create zammad-backup volume
-  community.docker.docker_volume:
-    name: zammad-backup
-
-- name: copy docker compose stack
+- name: copy docker compose
   ansible.builtin.copy:
-    src: defaults/zammad-stack
+    src: defaults/zammad
     dest: /opt/containers
     mode: '644'
     force: true
@@ -15,7 +11,7 @@
 - name: copy .env.j2
   ansible.builtin.template:
     src: templates/.env.j2
-    dest: /opt/containers/zammad-stack/.env
+    dest: /opt/containers/zammad/.env
     mode: '644'
 
 - name: Setting vm.max_map_count for Elasticsearch
@@ -28,7 +24,7 @@
     # reload: true
     # ignoreerrors: false
 
-- name: start docker compose stack
+- name: start docker compose
   community.docker.docker_compose_v2:
-    project_src: /opt/containers/zammad-stack
+    project_src: /opt/containers/zammad
     state: present
