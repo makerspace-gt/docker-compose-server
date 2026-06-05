@@ -7,12 +7,14 @@
     dest: /opt/containers
     mode: '644'
     force: true
+  register: copy_compose
 
 - name: copy .env.j2
   ansible.builtin.template:
     src: templates/.env.j2
     dest: /opt/containers/zammad/.env
     mode: '644'
+  register: copy_env
 
 - name: Setting vm.max_map_count for Elasticsearch
   ansible.posix.sysctl:
@@ -23,6 +25,7 @@
     # sysctl_file: "/etc/sysctl.conf"
     # reload: true
     # ignoreerrors: false
+  register: sysctl_max_map
 
 - name: Setting vm.overcommit_memory for Redis
   ansible.posix.sysctl:
@@ -33,6 +36,7 @@
     # sysctl_file: "/etc/sysctl.conf"
     # reload: true
     # ignoreerrors: false
+  register: sysctl_overcommit
 
 - name: start docker compose
   community.docker.docker_compose_v2:
@@ -40,6 +44,7 @@
     state: present
     recreate: always
     remove_orphans: true
+  when: copy_compose.changed or copy_env.changed or sysctl_max_map.changed or sysctl_overcommit.changed
 
 - name: restore zammad
   ansible.builtin.include_tasks:
