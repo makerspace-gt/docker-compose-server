@@ -40,3 +40,10 @@
     state: present
     recreate: always
     remove_orphans: true
+
+- name: restore zammad
+  ansible.builtin.include_tasks:
+    file: restore.yaml
+    apply:
+      tags: [zammad-restore, never]
+  tags: [zammad-restore, never]

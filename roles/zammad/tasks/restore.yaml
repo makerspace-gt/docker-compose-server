@@ -1,0 +1,122 @@
+---
+# Restore task for Zammad - only runs when --tags zammad-restore is set.
+# Run with: ansible-playbook ... --tags zammad-restore
+
+# docker exec zammad-resticker restic snapshots --tag zammad
+# docker exec zammad-resticker backup
+# docker exec zammad-resticker restic restore 7b5c4fe4:/var/lib/postgresql/data/ --include zammad_production.pg_dump --target /var/lib/postgresql/data/
+# docker compose --project-directory /opt/containers/zammad down --remove-orphans
+# docker compose --project-directory /opt/containers/zammad up -d zammad-postgresql
+# docker exec zammad-postgresql bash -c "dropdb zammad_production -U zammad"
+# docker exec zammad-postgresql bash -c "createdb zammad_production -U zammad"
+# docker exec zammad-postgresql bash -c "psql -U zammad zammad_production < /var/lib/postgresql/data/zammad_production.pg_dump"
+# docker compose --project-directory /opt/containers/zammad up -d --force-recreate
+# docker compose --project-directory /opt/containers/zammad exec zammad-railsserver bundle exec rake zammad:searchindex:rebuild
+
+
+- name: list available restic snapshots
+  community.docker.docker_container_exec:
+    container: zammad-resticker
+    command: restic snapshots --tag zammad
+  register: zammad_restic_snapshots
+
+- name: show snapshots
+  ansible.builtin.debug:
+    msg: "{{ zammad_restic_snapshots.stdout_lines }}"
+
+- name: select snapshot ID
+  ansible.builtin.pause:
+    prompt: "Enter the Restic Snapshot ID to restore from"
+  register: zammad_restic_snapshot_id_input
+
+- name: set snapshot ID
+  ansible.builtin.set_fact:
+    zammad_restic_snapshot_id: "{{ zammad_restic_snapshot_id_input.user_input }}"
+
+- name: confirm restore
+  ansible.builtin.pause:
+    prompt: |
+      WARNING: This will overwrite all Zammad data and database!
+      Restic Snapshot ID: {{ zammad_restic_snapshot_id }}
+      Type YES (uppercase) to confirm
+  register: zammad_restore_confirmation
+
+- name: abort if not confirmed
+  ansible.builtin.fail:
+    msg: "Restore aborted."
+  when: zammad_restore_confirmation.user_input != "YES"
+
+- name: load .env file
+  ansible.builtin.slurp:
+    src: /opt/containers/zammad/.env
+  register: zammad_env_content
+
+- name: parse database credentials
+  ansible.builtin.set_fact:
+    zammad_db_user: "{{ (zammad_env_content.content | b64decode | regex_search('POSTGRES_USER=(.*)$', '\\1', multiline=True) | first) | default('zammad') }}"
+    zammad_db_name: "{{ (zammad_env_content.content | b64decode | regex_search('POSTGRES_DB=(.*)$', '\\1', multiline=True) | first) | default('zammad_production') }}"
+
+- name: trigger backup in zammad-resticker
+  community.docker.docker_container_exec:
+    container: zammad-resticker
+    command: backup
+
+- name: restore database dump from restic
+  community.docker.docker_container_exec:
+    container: zammad-resticker
+    command: restic restore {{ zammad_restic_snapshot_id }}:/var/lib/postgresql/data/ --include {{ zammad_db_name }}.pg_dump --target /var/lib/postgresql/data/
+
+- name: stop all zammad containers
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/zammad
+    state: stopped
+
+- name: start only postgresql
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/zammad
+    state: started
+    services:
+      - zammad-postgresql
+
+- name: wait for postgresql to be ready
+  community.docker.docker_container_info:
+    name: zammad-postgresql
+  register: postgresql_info
+  retries: 30
+  delay: 1
+  until: postgresql_info.container.State.Health.Status is defined and postgresql_info.container.State.Health.Status == "healthy"
+
+- name: drop database
+  community.docker.docker_container_exec:
+    container: zammad-postgresql
+    command: bash -c "dropdb {{ zammad_db_name }} -U {{ zammad_db_user }}"
+
+- name: create new database
+  community.docker.docker_container_exec:
+    container: zammad-postgresql
+    command: bash -c "createdb {{ zammad_db_name }} -U {{ zammad_db_user }}"
+
+- name: restore database dump
+  community.docker.docker_container_exec:
+    container: zammad-postgresql
+    command: bash -c "psql -U {{ zammad_db_user }} {{ zammad_db_name }} < /var/lib/postgresql/data/{{ zammad_db_name }}.pg_dump"
+
+- name: start all zammad services with recreate
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/zammad
+    state: present
+    recreate: always
+    remove_orphans: true
+
+- name: wait for railsserver to be ready
+  community.docker.docker_container_info:
+    name: zammad-railsserver
+  register: railsserver_info
+  retries: 60
+  delay: 2
+  until: railsserver_info.container.State.Health.Status is defined and railsserver_info.container.State.Health.Status == "healthy"
+
+- name: rebuild searchindex
+  community.docker.docker_container_exec:
+    container: zammad-railsserver
+    command: bundle exec rake zammad:searchindex:rebuild
