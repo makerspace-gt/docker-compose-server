@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
     environment:
       BACKUP_CRON: "0 */30 0-2,6-23 * * *"
-      RESTIC_BACKUP_SOURCES: /data/zammad-postgresql-data/zammad_production.pg_dump
+      RESTIC_BACKUP_SOURCES: /var/lib/postgresql/data/zammad_production.pg_dump
       RESTIC_BACKUP_ARGS: >-
         --tag zammad
       RESTIC_FORGET_ARGS: >-
@@ -26,7 +26,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /opt/containers/resticker/rclone.conf:/run/secrets/rclone.conf:ro
-      - postgresql-data:/data/zammad-postgresql-data
+      - postgresql-data:/var/lib/postgresql/data
     depends_on:
       zammad-railsserver:
         condition: service_healthy

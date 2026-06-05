@@ -16,6 +16,9 @@ services:
     environment:
       BACKUP_CRON: "0 */30 0-2,6-23 * * *"
       SKIP_INIT: "false"
+      RESTIC_BACKUP_SOURCES: >-
+        /opt/containers
+        /var/lib/docker/volumes
       RESTIC_BACKUP_ARGS: >-
         --tag containers,volumes
       RESTIC_FORGET_ARGS: >-
@@ -25,8 +28,8 @@ services:
         --keep-monthly 12
     volumes:
       - ./rclone.conf:/run/secrets/rclone.conf:ro
-      - /opt/containers:/data/containers
-      - /var/lib/docker/volumes:/data/volumes
+      - /opt/containers:/opt/containers
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
   prune:
     <<: *resticker-service
     container_name: resticker-prune
