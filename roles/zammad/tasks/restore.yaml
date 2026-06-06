@@ -74,7 +74,7 @@
 - name: start only postgresql
   community.docker.docker_compose_v2:
     project_src: /opt/containers/zammad
-    state: started
+    state: present
     services:
       - zammad-postgresql
 
