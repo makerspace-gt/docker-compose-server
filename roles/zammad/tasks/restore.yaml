@@ -4,12 +4,12 @@
 
 # docker exec zammad-resticker restic snapshots --tag zammad
 # docker exec zammad-resticker backup
-# docker exec zammad-resticker restic restore 7b5c4fe4:/var/lib/postgresql/data/ --include zammad_production.pg_dump --target /var/lib/postgresql/data/
+# docker exec zammad-resticker restic restore deefb74d:/var/lib/postgresql/data/ --include zammad_production.pg_dump --target /var/lib/postgresql/data/restore/
 # docker compose --project-directory /opt/containers/zammad down --remove-orphans
 # docker compose --project-directory /opt/containers/zammad up -d zammad-postgresql
 # docker exec zammad-postgresql bash -c "dropdb zammad_production -U zammad"
 # docker exec zammad-postgresql bash -c "createdb zammad_production -U zammad"
-# docker exec zammad-postgresql bash -c "psql -U zammad zammad_production < /var/lib/postgresql/data/zammad_production.pg_dump"
+# docker exec zammad-postgresql bash -c "psql -U zammad zammad_production < /var/lib/postgresql/data/restore/zammad_production.pg_dump"
 # docker compose --project-directory /opt/containers/zammad up -d --force-recreate
 # docker compose --project-directory /opt/containers/zammad exec zammad-railsserver bundle exec rake zammad:searchindex:rebuild
 
@@ -64,7 +64,7 @@
 - name: restore database dump from restic
   community.docker.docker_container_exec:
     container: zammad-resticker
-    command: restic restore {{ zammad_restic_snapshot_id }}:/var/lib/postgresql/data/ --include {{ zammad_db_name }}.pg_dump --target /var/lib/postgresql/data/
+    command: restic restore {{ zammad_restic_snapshot_id }}:/var/lib/postgresql/data/ --include {{ zammad_db_name }}.pg_dump --target /var/lib/postgresql/data/restore/
 
 - name: stop all zammad containers
   community.docker.docker_compose_v2:
@@ -99,7 +99,7 @@
 - name: restore database dump
   community.docker.docker_container_exec:
     container: zammad-postgresql
-    command: bash -c "psql -U {{ zammad_db_user }} {{ zammad_db_name }} < /var/lib/postgresql/data/{{ zammad_db_name }}.pg_dump"
+    command: bash -c "psql -U {{ zammad_db_user }} {{ zammad_db_name }} < /var/lib/postgresql/data/restore/{{ zammad_db_name }}.pg_dump"
 
 - name: start all zammad services with recreate
   community.docker.docker_compose_v2:
