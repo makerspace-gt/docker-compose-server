@@ -1,7 +1,13 @@
 ---
 services:
   watchtower:
+    image: nickfedor/watchtower:latest
     container_name: watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - .env
     environment:
       TZ: Europe/Berlin
       WATCHTOWER_SCHEDULE: 0 0 4 * * 2 # check tuesdays at 04:00 o'clock
@@ -9,9 +15,6 @@ services:
       WATCHTOWER_REMOVE_VOLUMES: true
       WATCHTOWER_NOTIFICATION_REPORT: true
       WATCHTOWER_LIFECYCLE_HOOKS: true
-    env_file:
-      - /opt/containers/env_files/email.env
-      - .env
     deploy:
       resources:
         limits:

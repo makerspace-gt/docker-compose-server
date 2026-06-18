@@ -1,4 +1,0 @@
----
-# defaults file for watchtower
-
-WATCHTOWER_NOTIFICATIONS_HOSTNAME: "{{ ansible_host }}"
