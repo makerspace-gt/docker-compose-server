@@ -1,0 +1,3 @@
+---
+compose_dest: "/opt/containers/{{ compose_name }}"
+compose_templates_path: "{{ playbook_dir }}/roles/{{ compose_name }}/templates"
