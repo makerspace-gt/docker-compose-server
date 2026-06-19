@@ -34,17 +34,6 @@
         - ReneHezser    # René H.
         - nielsfechtel  # Niels
 
-    - name: Ensure /opt/containers/env_files directory exists
-      ansible.builtin.file:
-        path: /opt/containers/env_files
-        state: directory
-        mode: '0755'
-
-    - name: copy email.env
-      ansible.builtin.copy:
-        src: defaults/opt/containers/env_files/email.env
-        dest: /opt/containers/env_files/email.env
-
   roles:
 
     - role: weareinteractive.apt
