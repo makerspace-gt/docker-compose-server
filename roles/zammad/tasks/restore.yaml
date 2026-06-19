@@ -120,3 +120,8 @@
   community.docker.docker_container_exec:
     container: zammad-railsserver
     command: bundle exec rake zammad:searchindex:rebuild
+
+- name: delete restore directory
+  community.docker.docker_container_exec:
+    container: zammad-resticker
+    command: rm -rf /var/lib/postgresql/data/restore/

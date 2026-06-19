@@ -4,7 +4,7 @@ services:
   zammad-resticker:
     image: mazzolino/restic
     container_name: zammad-resticker
-    hostname: ${HOSTNAME}
+    hostname: {{ ansible_host }}
     restart: unless-stopped
     environment:
       BACKUP_CRON: "0 */30 0-2,6-23 * * *"
@@ -20,6 +20,14 @@ services:
             docker exec zammad-railsserver bundle exec rails r 'Channel.where(area: "Email::Account").update_all(active: false)'
             docker exec zammad-postgresql pg_dump --file=/var/lib/postgresql/data/zammad_production.pg_dump --dbname=zammad_production --username=zammad
             docker exec zammad-railsserver bundle exec rails r 'Channel.where(area: "Email::Account").update_all(active: true)'
+{% if UPTIME_KUMA_TOKEN_ZAMMAD is defined %}
+      POST_COMMANDS_SUCCESS: |-
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_ZAMMAD }}?status=up&msg=SUCCESS"
+      POST_COMMANDS_FAILURE: |-
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_ZAMMAD }}?status=up&msg=FAILURE"
+      POST_COMMANDS_INCOMPLETE: |-
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_ZAMMAD }}?status=up&msg=INCOMPLETE"
+{% endif %}
     env_file:
       - /opt/containers/resticker/.env
       - .env
@@ -32,6 +40,12 @@ services:
         condition: service_healthy
       zammad-postgresql:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "restic cat config > /dev/null 2>&1"]
+      interval: 5m
+      timeout: 30s
+      retries: 3
+      start_period: 30s
   zammad-backup:
     container_name: zammad-backup
     profiles:
@@ -43,12 +57,12 @@ services:
           memory: "${ZAMMAD_BACKUP_RESOURCES_LIMITS_MEMORY:-500m}"
   zammad-elasticsearch:
     container_name: zammad-elasticsearch
-    image: zammad-elasticsearch:${ELASTICSEARCH_VERSION:-7.17.28}
-    build:
-      context: .
-      dockerfile: Dockerfile.elasticsearch
-      args:
-        ELASTICSEARCH_VERSION: ${ELASTICSEARCH_VERSION:-7.17.28}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:${ELASTICSEARCH_PORT:-9200}/_cluster/health | grep -qE '\"status\":\"(green|yellow)\"'"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 5
     deploy:
       resources:
         limits:
@@ -71,6 +85,12 @@ services:
   zammad-nginx:
     container_name: zammad-nginx
     ports: !reset []
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:${NGINX_PORT:-8080}"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
     labels:
       traefik.docker.network: proxy
       traefik.enable: "true"
@@ -119,6 +139,12 @@ services:
           memory: "${ZAMMAD_REDIS_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-scheduler:
     container_name: zammad-scheduler
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f background-worker"]
+      interval: 30s
+      timeout: 5s
+      start_period: 120s
+      retries: 3
     volumes:
       - ./app/models/ticket.rb:/opt/zammad/app/models/ticket.rb
     deploy:
@@ -128,6 +154,12 @@ services:
           memory: "${ZAMMAD_SCHEDULER_RESOURCES_LIMITS_MEMORY:-500M}"
   zammad-websocket:
     container_name: zammad-websocket
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f websocket-server"]
+      interval: 30s
+      timeout: 5s
+      start_period: 60s
+      retries: 3
     deploy:
       resources:
         limits:
