@@ -34,14 +34,11 @@ services:
         --keep-monthly 12
 {% if UPTIME_KUMA_TOKEN_RESTIC_BACKUP is defined %}
       POST_COMMANDS_SUCCESS: >-
-        curl -s -o /dev/null
-        "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_RESTIC_BACKUP }}?status=up&msg=SUCCESS"
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_RESTIC_BACKUP }}?status=up&msg=SUCCESS"
       POST_COMMANDS_FAILURE: >-
-        curl -s -o /dev/null
-        "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_RESTIC_BACKUP }}?status=down&msg=FAILURE"
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_RESTIC_BACKUP }}?status=down&msg=FAILURE"
       POST_COMMANDS_INCOMPLETE: >-
-        curl -s -o /dev/null
-        "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_RESTIC_BACKUP }}?status=down&msg=INCOMPLETE"
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_RESTIC_BACKUP }}?status=down&msg=INCOMPLETE"
 {% endif %}
     volumes:
       - ./rclone.conf:/run/secrets/rclone.conf:ro
