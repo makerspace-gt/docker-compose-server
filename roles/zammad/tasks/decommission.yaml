@@ -1,0 +1,41 @@
+---
+# Decommission task for Zammad - triggers a final backup and shuts down all services.
+# Run with: ansible-playbook ... --tags zammad-decommission
+
+- name: confirm decommission
+  ansible.builtin.pause:
+    prompt: |
+      WARNING: This will put Zammad into maintenance mode, create a final backup and shut down all services!
+      Type YES (uppercase) to confirm
+  register: zammad_decommission_confirmation
+
+- name: abort if not confirmed
+  ansible.builtin.fail:
+    msg: "Decommission aborted."
+  when: zammad_decommission_confirmation.user_input != "YES"
+
+- name: recreate resticker with decommission override
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/zammad
+    files:
+      - compose.yaml
+      - compose.override.yaml
+      - compose.decommission.yaml
+    services: zammad-resticker
+    state: present
+    recreate: always
+    remove_orphans: true
+    wait: true
+
+- name: trigger final backup
+  community.docker.docker_container_exec:
+    container: zammad-resticker
+    command: backup
+    timeout: 1800
+  register: zammad_final_backup
+
+- name: stop all Zammad services
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/zammad
+    state: stopped
+    remove_orphans: true

@@ -1,0 +1,13 @@
+---
+
+services:
+  zammad-resticker:
+    environment:
+      RESTIC_BACKUP_ARGS: >-
+        --tag zammad,decommission
+      PRE_COMMANDS: |-
+        docker exec zammad-railsserver bundle exec rails runner 'Setting.set("maintenance_mode", true)'
+        docker exec zammad-railsserver bundle exec rails runner 'Channel.where(area: "Email::Account").update_all(active: false)'
+        docker exec zammad-postgresql pg_dump --file=/var/lib/postgresql/data/zammad_production.pg_dump --dbname=zammad_production --username=zammad
+      BACKUP_CRON: "0 0 31 2 *"
+      RUN_ON_STARTUP: "false"

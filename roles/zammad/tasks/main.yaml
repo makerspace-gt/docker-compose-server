@@ -37,3 +37,10 @@
     apply:
       tags: [zammad-restore, never]
   tags: [zammad-restore, never]
+
+- name: decommission zammad
+  ansible.builtin.include_tasks:
+    file: decommission.yaml
+    apply:
+      tags: [zammad-decommission, never]
+  tags: [zammad-decommission, never]
