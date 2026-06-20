@@ -1,6 +1,6 @@
 ---
 - name: Deploy IT infrastructure servers
-  hosts: spof
+  hosts: unseven
   remote_user: root
 
   pre_tasks:
