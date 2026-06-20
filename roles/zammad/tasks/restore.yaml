@@ -56,11 +56,6 @@
     zammad_db_user: "{{ (zammad_env_content.content | b64decode | regex_search('POSTGRES_USER=(.*)$', '\\1', multiline=True) | first) | default('zammad') }}"
     zammad_db_name: "{{ (zammad_env_content.content | b64decode | regex_search('POSTGRES_DB=(.*)$', '\\1', multiline=True) | first) | default('zammad_production') }}"
 
-- name: trigger backup in zammad-resticker
-  community.docker.docker_container_exec:
-    container: zammad-resticker
-    command: backup
-
 - name: restore database dump from restic
   community.docker.docker_container_exec:
     container: zammad-resticker
@@ -108,13 +103,13 @@
     recreate: always
     remove_orphans: true
 
-- name: wait for railsserver to be ready
+- name: wait for init container to finish
   community.docker.docker_container_info:
-    name: zammad-railsserver
-  register: railsserver_info
+    name: zammad-init
+  register: init_info
   retries: 60
-  delay: 2
-  until: railsserver_info.container.State.Health.Status is defined and railsserver_info.container.State.Health.Status == "healthy"
+  delay: 5
+  until: init_info.container.State.Status == "exited" and init_info.container.State.ExitCode == 0
 
 - name: rebuild searchindex
   community.docker.docker_container_exec:
@@ -125,3 +120,8 @@
   community.docker.docker_container_exec:
     container: zammad-resticker
     command: rm -rf /var/lib/postgresql/data/restore/
+
+- name: disable maintenance mode
+  community.docker.docker_container_exec:
+    container: zammad-railsserver
+    command: bundle exec rails runner 'Setting.set("maintenance_mode", false)'
