@@ -44,6 +44,7 @@ services:
       - ./rclone.conf:/run/secrets/rclone.conf:ro
       - /opt/containers:/opt/containers
       - /var/lib/docker/volumes:/var/lib/docker/volumes
+
   prune:
     <<: *resticker-service
     container_name: resticker-prune
@@ -54,6 +55,7 @@ services:
         curl -s -o /dev/null
         "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_RESTIC_PRUNE }}?status=up&msg=SUCCESS"
 {% endif %}
+
   check:
     <<: *resticker-service
     container_name: resticker-check

@@ -46,6 +46,7 @@ services:
       timeout: 30s
       retries: 3
       start_period: 30s
+
   zammad-backup:
     container_name: zammad-backup
     profiles:
@@ -55,6 +56,7 @@ services:
         limits:
           cpus: "${ZAMMAD_BACKUP_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_BACKUP_RESOURCES_LIMITS_MEMORY:-500m}"
+
   zammad-elasticsearch:
     container_name: zammad-elasticsearch
     healthcheck:
@@ -68,6 +70,7 @@ services:
         limits:
           cpus: "${ZAMMAD_ELASTICSEARCH_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_ELASTICSEARCH_RESOURCES_LIMITS_MEMORY:-1G}"
+
   zammad-init:
     container_name: zammad-init
     deploy:
@@ -75,6 +78,7 @@ services:
         limits:
           cpus: "${ZAMMAD_INIT_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_INIT_RESOURCES_LIMITS_MEMORY:-500M}"
+
   zammad-memcached:
     container_name: zammad-memcached
     deploy:
@@ -82,6 +86,7 @@ services:
         limits:
           cpus: "${ZAMMAD_MEMCACHED_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_MEMCACHED_RESOURCES_LIMITS_MEMORY:-500M}"
+
   zammad-nginx:
     container_name: zammad-nginx
     ports: !reset []
@@ -111,6 +116,7 @@ services:
         limits:
           cpus: "${ZAMMAD_NGINX_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_NGINX_RESOURCES_LIMITS_MEMORY:-500M}"
+
   zammad-postgresql:
     container_name: zammad-postgresql
     image: pgautoupgrade/pgautoupgrade:${POSTGRES_VERSION:-17.10-alpine}
@@ -119,6 +125,7 @@ services:
         limits:
           cpus: "${ZAMMAD_POSTGRESQL_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_POSTGRESQL_RESOURCES_LIMITS_MEMORY:-500M}"
+
   zammad-railsserver:
     container_name: zammad-railsserver
     environment:
@@ -130,6 +137,7 @@ services:
         limits:
           cpus: "${ZAMMAD_RAILSSERVER_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_RAILSSERVER_RESOURCES_LIMITS_MEMORY:-500M}"
+
   zammad-redis:
     container_name: zammad-redis
     deploy:
@@ -137,6 +145,7 @@ services:
         limits:
           cpus: "${ZAMMAD_REDIS_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_REDIS_RESOURCES_LIMITS_MEMORY:-500M}"
+
   zammad-scheduler:
     container_name: zammad-scheduler
     healthcheck:
@@ -152,6 +161,7 @@ services:
         limits:
           cpus: "${ZAMMAD_SCHEDULER_RESOURCES_LIMITS_CPUS:-1.0}"
           memory: "${ZAMMAD_SCHEDULER_RESOURCES_LIMITS_MEMORY:-500M}"
+
   zammad-websocket:
     container_name: zammad-websocket
     healthcheck:
