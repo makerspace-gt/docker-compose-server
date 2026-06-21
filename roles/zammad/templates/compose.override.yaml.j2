@@ -24,9 +24,9 @@ services:
       POST_COMMANDS_SUCCESS: |-
         curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_ZAMMAD }}?status=up&msg=SUCCESS"
       POST_COMMANDS_FAILURE: |-
-        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_ZAMMAD }}?status=up&msg=FAILURE"
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_ZAMMAD }}?status=down&msg=FAILURE"
       POST_COMMANDS_INCOMPLETE: |-
-        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_ZAMMAD }}?status=up&msg=INCOMPLETE"
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_ZAMMAD }}?status=down&msg=INCOMPLETE"
 {% endif %}
     env_file:
       - /opt/containers/resticker/.env
