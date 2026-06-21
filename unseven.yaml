@@ -5,6 +5,10 @@
 
   roles:
 
+    - role: roles/vaultwarden
+      vars:
+        VAULTWARDEN_FQDN: vault.makerspace-gt.de
+
     - role: roles/zammad
       vars:
         SERVICES_ZAMMAD_LABELS_TRAEFIK_HOST: helpdesk.makerspace-gt.de
