@@ -1,24 +1,6 @@
 ---
-# tasks file for vaultwarden
+- ansible.builtin.set_fact:
+    compose_name: "{{ role_path | basename }}"
 
-- name: Create vaultwarden volume
-  community.docker.docker_volume:
-    name: vaultwarden-data
-
-- name: copy docker compose stack
-  ansible.builtin.copy:
-    src: defaults/vaultwarden
-    dest: /opt/containers
-    mode: '644'
-    force: true
-
-- name: copy .env.j2
-  ansible.builtin.template:
-    src: templates/.env.j2
-    dest: /opt/containers/vaultwarden/.env
-    mode: '644'
-
-- name: start docker compose stack
-  community.docker.docker_compose_v2:
-    project_src: /opt/containers/vaultwarden
-    state: present
+- ansible.builtin.include_role:
+    name: compose_deploy
