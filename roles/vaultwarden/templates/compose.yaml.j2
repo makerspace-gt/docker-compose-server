@@ -21,6 +21,40 @@ services:
       default: null
       proxy: null
 
+  vaultwarden-resticker:
+    image: mazzolino/restic
+    container_name: vaultwarden-resticker
+    hostname: {{ ansible_host }}
+    restart: unless-stopped
+    environment:
+      BACKUP_CRON: "0 */30 0-2,6-23 * * *"
+      RESTIC_BACKUP_SOURCES: /data
+      RESTIC_BACKUP_ARGS: >-
+        --tag vaultwarden
+      RESTIC_FORGET_ARGS: >-
+        --keep-last 10
+        --keep-daily 7
+        --keep-weekly 5
+        --keep-monthly 12
+{% if UPTIME_KUMA_TOKEN_VAULTWARDEN is defined %}
+      POST_COMMANDS_SUCCESS: |-
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_VAULTWARDEN }}?status=up&msg=SUCCESS"
+      POST_COMMANDS_FAILURE: |-
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_VAULTWARDEN }}?status=up&msg=FAILURE"
+      POST_COMMANDS_INCOMPLETE: |-
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_VAULTWARDEN }}?status=up&msg=INCOMPLETE"
+{% endif %}
+    env_file:
+      - /opt/containers/resticker/.env
+    volumes:
+      - vaultwarden-data:/data/
+    healthcheck:
+      test: ["CMD-SHELL", "restic cat config > /dev/null 2>&1"]
+      interval: 5m
+      timeout: 30s
+      retries: 3
+      start_period: 30s
+
 networks:
   default:
   proxy:
