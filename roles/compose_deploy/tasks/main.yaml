@@ -19,9 +19,11 @@
     state: present
     recreate: always
     remove_orphans: true
+    wait: true
   when: templates_result.changed
 
 - name: start {{ compose_name }}
   community.docker.docker_compose_v2:
     project_src: "{{ compose_dest }}"
     state: present
+    wait: true
