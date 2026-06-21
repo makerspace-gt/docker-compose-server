@@ -1,0 +1,46 @@
+---
+# Decommission task for Vaultwarden - triggers a final backup and shuts down all services.
+# Run with: ansible-playbook ... --tags vaultwarden-decommission
+
+- name: confirm decommission
+  ansible.builtin.pause:
+    prompt: |
+      WARNING: This will create a final backup and shut down all Vaultwarden services!
+      Type YES (uppercase) to confirm
+  register: vaultwarden_decommission_confirmation
+
+- name: abort if not confirmed
+  ansible.builtin.fail:
+    msg: "Decommission aborted."
+  when: vaultwarden_decommission_confirmation.user_input != "YES"
+
+- name: stop all Vaultwarden services
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/vaultwarden
+    state: stopped
+    remove_orphans: true
+
+- name: recreate resticker with decommission override
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/vaultwarden
+    files:
+      - compose.yaml
+      - compose.decommission.yaml
+    services: vaultwarden-resticker
+    state: present
+    recreate: always
+    remove_orphans: true
+    wait: true
+
+- name: trigger final backup
+  community.docker.docker_container_exec:
+    container: vaultwarden-resticker
+    command: backup
+    timeout: 1800
+  register: vaultwarden_final_backup
+
+- name: stop all Vaultwarden services
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/vaultwarden
+    state: stopped
+    remove_orphans: true

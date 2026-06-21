@@ -1,0 +1,9 @@
+---
+
+services:
+  vaultwarden-resticker:
+    environment:
+      RESTIC_BACKUP_ARGS: >-
+        --tag vaultwarden,decommission
+      BACKUP_CRON: "0 0 31 2 *"
+      RUN_ON_STARTUP: "false"

@@ -1,0 +1,83 @@
+---
+# Restore task for Vaultwarden - only runs when --tags vaultwarden-restore is set.
+# Run with: ansible-playbook ... --tags vaultwarden-restore
+
+- name: ensure resticker is running
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/vaultwarden
+    state: present
+    services:
+      - vaultwarden-resticker
+    wait: true
+
+- name: list available restic snapshots
+  community.docker.docker_container_exec:
+    container: vaultwarden-resticker
+    command: restic snapshots --tag vaultwarden
+  register: vaultwarden_restic_snapshots
+
+- name: show snapshots
+  ansible.builtin.debug:
+    msg: "{{ vaultwarden_restic_snapshots.stdout_lines }}"
+
+- name: select snapshot ID
+  ansible.builtin.pause:
+    prompt: "Enter the Restic Snapshot ID to restore from"
+  register: vaultwarden_restic_snapshot_id_input
+
+- name: set snapshot ID
+  ansible.builtin.set_fact:
+    vaultwarden_restic_snapshot_id: "{{ vaultwarden_restic_snapshot_id_input.user_input }}"
+
+- name: confirm restore
+  ansible.builtin.pause:
+    prompt: |
+      WARNING: This will overwrite all Vaultwarden data!
+      Restic Snapshot ID: {{ vaultwarden_restic_snapshot_id }}
+      Type YES (uppercase) to confirm
+  register: vaultwarden_restore_confirmation
+
+- name: abort if not confirmed
+  ansible.builtin.fail:
+    msg: "Restore aborted."
+  when: vaultwarden_restore_confirmation.user_input != "YES"
+
+- name: stop and remove all Vaultwarden containers
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/vaultwarden
+    state: absent
+    remove_orphans: true
+
+- name: remove all Vaultwarden volumes
+  community.docker.docker_volume:
+    name: "{{ item }}"
+    state: absent
+  loop:
+    - vaultwarden_vaultwarden-data
+
+- name: recreate resticker with decommission override
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/vaultwarden
+    files:
+      - compose.yaml
+      - compose.decommission.yaml
+    services: vaultwarden-resticker
+    state: present
+    recreate: always
+    remove_orphans: true
+    wait: true
+
+- name: restore data from restic snapshot
+  community.docker.docker_container_exec:
+    container: vaultwarden-resticker
+    command: restic restore {{ vaultwarden_restic_snapshot_id }} --target /
+    # command: restic restore {{ vaultwarden_restic_snapshot_id }}:/mnt/volumes/docker/vaultwarden-data/_data/ --target /data/
+    timeout: 1800
+
+- name: start all Vaultwarden services
+  community.docker.docker_compose_v2:
+    project_src: /opt/containers/vaultwarden
+    state: present
+    recreate: always
+    remove_orphans: true
+    wait: true

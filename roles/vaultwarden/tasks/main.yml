@@ -4,3 +4,17 @@
 
 - ansible.builtin.include_role:
     name: compose_deploy
+
+- name: restore vaultwarden
+  ansible.builtin.include_tasks:
+    file: restore.yaml
+    apply:
+      tags: [vaultwarden-restore, never]
+  tags: [vaultwarden-restore, never]
+
+- name: decommission vaultwarden
+  ansible.builtin.include_tasks:
+    file: decommission.yaml
+    apply:
+      tags: [vaultwarden-decommission, never]
+  tags: [vaultwarden-decommission, never]
