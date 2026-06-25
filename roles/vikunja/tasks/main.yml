@@ -1,0 +1,6 @@
+---
+- ansible.builtin.set_fact:
+    compose_name: "{{ role_path | basename }}"
+
+- ansible.builtin.include_role:
+    name: compose_deploy
