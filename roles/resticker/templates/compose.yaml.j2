@@ -26,6 +26,7 @@ services:
         /opt/containers
         /var/lib/docker/volumes
       RESTIC_BACKUP_ARGS: >-
+        --retry-lock 7m
         --tag containers,volumes
       RESTIC_FORGET_ARGS: >-
         --keep-last 10
@@ -50,6 +51,8 @@ services:
     container_name: resticker-prune
     environment:
       PRUNE_CRON: "0 {{ 59 | random(seed=inventory_hostname) }} 4 * * *"
+      RESTIC_PRUNE_ARGS: >-
+        --retry-lock 7m
 {% if UPTIME_KUMA_TOKEN_RESTIC_PRUNE is defined %}
       POST_COMMANDS_SUCCESS: >-
         curl -s -o /dev/null
@@ -63,6 +66,7 @@ services:
       RUN_ON_STARTUP: "false"
       CHECK_CRON: "0 {{ 59 | random(seed=inventory_hostname) }} 5 * * *"
       RESTIC_CHECK_ARGS: >-
+        --retry-lock 7m
         --read-data-subset=10%
 {% if UPTIME_KUMA_TOKEN_RESTIC_CHECK is defined %}
       POST_COMMANDS_SUCCESS: >-

@@ -10,6 +10,7 @@ services:
       BACKUP_CRON: "0 */30 0-2,6-23 * * *"
       RESTIC_BACKUP_SOURCES: /var/lib/postgresql/data/zammad_production.pg_dump
       RESTIC_BACKUP_ARGS: >-
+        --retry-lock 7m
         --tag zammad
       RESTIC_FORGET_ARGS: >-
         --keep-last 10
