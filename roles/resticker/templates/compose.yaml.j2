@@ -55,8 +55,7 @@ services:
         --retry-lock 7m
 {% if UPTIME_KUMA_TOKEN_RESTIC_PRUNE is defined %}
       POST_COMMANDS_SUCCESS: >-
-        curl -s -o /dev/null
-        "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_RESTIC_PRUNE }}?status=up&msg=SUCCESS"
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_RESTIC_PRUNE }}?status=up&msg=SUCCESS"
 {% endif %}
 
   check:
@@ -70,6 +69,5 @@ services:
         --read-data-subset=10%
 {% if UPTIME_KUMA_TOKEN_RESTIC_CHECK is defined %}
       POST_COMMANDS_SUCCESS: >-
-        curl -s -o /dev/null
-        "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_RESTIC_CHECK }}?status=up&msg=SUCCESS"
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_RESTIC_CHECK }}?status=up&msg=SUCCESS"
 {% endif %}
