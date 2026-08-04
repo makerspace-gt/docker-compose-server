@@ -1,0 +1,40 @@
+---
+- name: ensure git is installed
+  ansible.builtin.package:
+    name: git
+    state: present
+
+- name: clone/update discourse_docker
+  ansible.builtin.git:
+    repo: "{{ DISCOURSE_REPO_URL }}"
+    dest: "{{ DISCOURSE_INSTALL_DIR }}"
+    version: "{{ DISCOURSE_BRANCH }}"
+    depth: 1
+    force: true
+  register: discourse_repo
+
+- name: symlink /var/discourse to install dir
+  ansible.builtin.file:
+    src: "{{ DISCOURSE_INSTALL_DIR }}"
+    dest: /var/discourse
+    state: link
+  when: DISCOURSE_INSTALL_DIR != '/var/discourse'
+
+- name: render discourse containers/app.yml
+  ansible.builtin.template:
+    src: containers/app.yml.j2
+    dest: "{{ DISCOURSE_INSTALL_DIR }}/containers/app.yml"
+    mode: '600'
+  register: discourse_app_yml
+
+- name: Setting vm.overcommit_memory for Redis
+  ansible.posix.sysctl:
+    name: vm.overcommit_memory
+    value: '1'
+    sysctl_set: yes
+
+- name: rebuild discourse app
+  ansible.builtin.command:
+    cmd: ./launcher rebuild app
+    chdir: "{{ DISCOURSE_INSTALL_DIR }}"
+  when: discourse_repo.changed or discourse_app_yml.changed

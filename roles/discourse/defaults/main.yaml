@@ -1,0 +1,5 @@
+---
+DISCOURSE_INSTALL_DIR: /opt/containers/discourse
+DISCOURSE_REPO_URL: https://github.com/discourse/discourse_docker.git
+DISCOURSE_BRANCH: main
+LANGUAGE: de_DE.UTF-8

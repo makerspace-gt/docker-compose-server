@@ -1,0 +1,11 @@
+---
+- name: deploy it infrastructure servers
+  hosts: discourse
+  remote_user: root
+
+  roles:
+
+    - role: roles/discourse
+      vars:
+        DISCOURSE_FQDN: forum-restore.makerspace-gt.de
+        DISCOURSE_NOTIFICATION_EMAIL: forum@makerspace-gt.de
