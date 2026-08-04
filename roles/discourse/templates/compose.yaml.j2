@@ -1,0 +1,43 @@
+---
+services:
+  discourse-resticker:
+    image: mazzolino/restic
+    container_name: discourse-resticker
+    hostname: {{ ansible_host }}
+    restart: unless-stopped
+    environment:
+      BACKUP_CRON: "0 */30 0-2,6-23 * * *"
+      RESTIC_BACKUP_SOURCES: >-
+        /var/discourse/containers/app.yml
+        /var/discourse/shared/standalone/backups/default/
+      RESTIC_BACKUP_ARGS: >-
+        --retry-lock 7m
+        --tag discourse
+      RESTIC_FORGET_ARGS: >-
+        --keep-last 10
+        --keep-daily 7
+        --keep-weekly 5
+        --keep-monthly 12
+      PRE_COMMANDS: |-
+            docker exec app discourse backup
+{% if UPTIME_KUMA_TOKEN_DISCOURSE is defined %}
+      POST_COMMANDS_SUCCESS: |-
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_DISCOURSE }}?status=up&msg=SUCCESS"
+      POST_COMMANDS_FAILURE: |-
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_DISCOURSE }}?status=down&msg=FAILURE"
+      POST_COMMANDS_INCOMPLETE: |-
+        curl -s -o /dev/null "https://{{ UPTIME_KUMA_HOST }}/api/push/{{ UPTIME_KUMA_TOKEN_DISCOURSE }}?status=down&msg=INCOMPLETE"
+{% endif %}
+    env_file:
+      - /opt/containers/resticker/.env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /opt/containers/resticker/rclone.conf:/run/secrets/rclone.conf:ro
+      - /var/discourse/containers/app.yml:/var/discourse/containers/app.yml
+      - /var/discourse/shared/standalone/backups/default/:/var/discourse/shared/standalone/backups/default/
+    healthcheck:
+      test: ["CMD-SHELL", "restic cat config > /dev/null 2>&1"]
+      interval: 5m
+      timeout: 30s
+      retries: 3
+      start_period: 30s

@@ -38,3 +38,9 @@
     cmd: ./launcher rebuild app
     chdir: "{{ DISCOURSE_INSTALL_DIR }}"
   when: discourse_repo.changed or discourse_app_yml.changed
+
+- ansible.builtin.set_fact:
+    compose_name: "{{ role_path | basename }}"
+
+- ansible.builtin.include_role:
+    name: compose_deploy
