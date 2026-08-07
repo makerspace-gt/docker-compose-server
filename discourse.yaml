@@ -7,5 +7,6 @@
 
     - role: roles/discourse
       vars:
-        DISCOURSE_FQDN: forum-restore.makerspace-gt.de
+        DISCOURSE_FQDN: forum.makerspace-gt.de
+        DISCOURSE_FQDN_ALIASES: discourse.makerspace-gt.de,community.makerspace-gt.de
         DISCOURSE_NOTIFICATION_EMAIL: forum@makerspace-gt.de

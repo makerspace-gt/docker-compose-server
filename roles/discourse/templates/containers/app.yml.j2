@@ -16,6 +16,9 @@ env:
   LANG: "{{ LANGUAGE }}"
   LANGUAGE: "{{ LANGUAGE }}"
   DISCOURSE_HOSTNAME: "{{ DISCOURSE_FQDN }}"
+{% if DISCOURSE_FQDN_ALIASES is defined %}
+  DISCOURSE_HOSTNAME_ALIASES: "{{ DISCOURSE_FQDN_ALIASES }}"
+{% endif %}
   DISCOURSE_DEVELOPER_EMAILS: "{{ SMTP_RECIPIENT }}"
   DISCOURSE_SMTP_ADDRESS: "{{ SMTP_HOST }}"
   DISCOURSE_SMTP_USER_NAME: "{{ DISCOURSE_NOTIFICATION_EMAIL }}"
@@ -27,10 +30,10 @@ env:
   UNICORN_WORKERS: 4
 volumes:
   - volume:
-      host: "{{ DISCOURSE_INSTALL_DIR }}/shared/standalone"
+      host: "discourse-shared"
       guest: "/shared"
   - volume:
-      host: "{{ DISCOURSE_INSTALL_DIR }}/shared/standalone/log/var-log"
+      host: "discourse-log"
       guest: "/var/log"
 hooks:
   after_code:

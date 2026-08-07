@@ -1,0 +1,12 @@
+
+# https://meta.discourse.org/t/restore-a-backup-from-the-command-line/108034
+
+# docker exec discourse-resticker restic snapshots --tag discourse
+# docker exec discourse-resticker restic restore 02b23e25:/mnt/volumes/discourse/shared/standalone/backups/default --target /var/discourse/shared/standalone/backups/default
+
+# docker exec app discourse enable_restore
+# docker exec app ls /shared/backups/default
+# docker exec app discourse restore makerspace-gt-2026-08-06-180653-v20230823100627.tar.gz
+
+# cd /var/discourse
+# ./launcher rebuild app

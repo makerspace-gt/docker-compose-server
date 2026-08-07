@@ -34,10 +34,14 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /opt/containers/resticker/rclone.conf:/run/secrets/rclone.conf:ro
       - /var/discourse/containers/app.yml:/var/discourse/containers/app.yml
-      - /var/discourse/shared/standalone/backups/default/:/var/discourse/shared/standalone/backups/default/
+      - discourse-shared:/var/discourse/shared/standalone
     healthcheck:
       test: ["CMD-SHELL", "restic cat config > /dev/null 2>&1"]
       interval: 5m
       timeout: 30s
       retries: 3
       start_period: 30s
+
+volumes:
+  discourse-shared:
+    external: true
